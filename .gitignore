@@ -1,0 +1,13 @@
+*.*~
+*.dylib
+*.os
+*.pyc
+*.swp
+*.so
+*.tmp
+.DS_Store
+.sconf_temp
+.sconsign.dblite
+.vscode
+config.log
+cmake-build-*

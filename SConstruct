@@ -564,10 +564,10 @@ libraries = {
 
 	"GafferAstroUI" : {
 		"envAppends" : {
-			"LIBS" : [ "Gaffer", "Iex$OPENEXR_LIB_SUFFIX", "IECoreGL$CORTEX_LIB_SUFFIX", "IECoreImage$CORTEX_LIB_SUFFIX", "IECoreScene$CORTEX_LIB_SUFFIX" ],
+			"LIBS" : [ "Gaffer", "GafferAstro", "Iex$OPENEXR_LIB_SUFFIX", "IECoreGL$CORTEX_LIB_SUFFIX", "IECoreImage$CORTEX_LIB_SUFFIX", "IECoreScene$CORTEX_LIB_SUFFIX", "GafferUI" ],
 		},
 		"pythonEnvAppends" : {
-			"LIBS" : [ "IECoreImage$CORTEX_LIB_SUFFIX", "IECoreGL$CORTEX_LIB_SUFFIX", "GafferUI", "GafferBindings" ],
+			"LIBS" : [ "IECoreImage$CORTEX_LIB_SUFFIX", "IECoreGL$CORTEX_LIB_SUFFIX", "GafferUI", "GafferBindings", "GafferAstroUI" ],
 			 # Prevent Qt clashing with boost::signals - we can remove
 			 # this if we move to boost::signals2.
 			 "CXXFLAGS" : [ "-DQT_NO_KEYWORDS" ],

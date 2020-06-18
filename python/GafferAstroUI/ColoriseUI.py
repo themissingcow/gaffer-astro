@@ -34,11 +34,81 @@
 #
 ##########################################################################
 
+import Gaffer
 import GafferAstro
-import GafferAstroUI
 
-import GafferUI
+Gaffer.Metadata.registerNode(
 
-nodeMenu = GafferUI.NodeMenu.acquire( application )
+	GafferAstro.Colorise,
 
-nodeMenu.append( "/Image/Color/Colorise", GafferAstro.Colorise )
+	"description",
+	"""
+	Colorises a single channel from the input to produce an RGBA output.
+	Colorisation can either be constant, or via a color spline to produce
+	false color images.
+	""",
+
+	"layout:section:Settings.Map:collapsed", False,
+
+	plugs = {
+
+		"channel" : [
+
+			"description",
+			"""
+			The source luminance channel.
+			""",
+
+			"layout:index", 0,
+
+		],
+
+		"constant" : [
+
+			"description",
+			"""
+			A fixed multiplier, applied either the direct channel value,
+			or the re-mapped color via the map.
+			""",
+
+			"layout:index", 1,
+
+		],
+
+		"mapEnabled" : [
+
+			"description",
+			"""
+			Enables color spline remapping.
+			""",
+
+			"layout:section", "Settings.Map"
+
+		],
+
+		"map" : [
+
+			"description",
+			"""
+			The values in the selected channel are used to pick a color
+			from the map. The spline is mapped to the range specified
+			in the 'range' plug.
+			""",
+
+			"layout:section", "Settings.Map"
+		],
+
+		"range" : [
+
+			"description",
+			"""
+			Determines the range over which the map is applied. The min value
+			will map to the left of the spline, and the max value to the right.
+			""",
+
+			"layout:section", "Settings.Map"
+		]
+
+	}
+
+)

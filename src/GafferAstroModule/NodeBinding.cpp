@@ -36,6 +36,7 @@
 
 #include "NodeBinding.h"
 
+#include "GafferAstro/AssembleChannels.h"
 #include "GafferAstro/Colorise.h"
 
 #include "GafferBindings/DependencyNodeBinding.h"
@@ -47,6 +48,7 @@ using namespace GafferAstro;
 void GafferAstroModule::bindNodes()
 {
 
+	DependencyNodeClass<AssembleChannels>();
 	DependencyNodeClass<Colorise>();
 
 }

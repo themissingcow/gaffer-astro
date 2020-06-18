@@ -43,6 +43,7 @@ namespace GafferAstro
 enum TypeId
 {
 	ColoriseTypeId = 400100,
+	AssembleChannelsTypeId = 400101,
 
 	LastTypeId = 400199
 };

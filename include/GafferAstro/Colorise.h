@@ -59,7 +59,7 @@ class GAFFERASTRO_API Colorise : public FlatImageProcessor
 		Colorise( const std::string &name=defaultName<Colorise>() );
 		~Colorise() override;
 
-		GAFFER_GRAPHCOMPONENT_DECLARE_TYPE( GafferAstro::Colorise, ColoriseTypeId, ImageProcessor );
+		GAFFER_GRAPHCOMPONENT_DECLARE_TYPE( GafferAstro::Colorise, ColoriseTypeId, FlatImageProcessor );
 
 		Gaffer::StringPlug *channelPlug();
 		const Gaffer::StringPlug *channelPlug() const;

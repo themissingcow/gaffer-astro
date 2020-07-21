@@ -38,6 +38,7 @@
 
 #include "GafferAstro/AssembleChannels.h"
 #include "GafferAstro/Colorise.h"
+#include "GafferAstro/FITSReader.h"
 
 #include "GafferBindings/DependencyNodeBinding.h"
 
@@ -50,5 +51,6 @@ void GafferAstroModule::bindNodes()
 
 	DependencyNodeClass<AssembleChannels>();
 	DependencyNodeClass<Colorise>();
+	DependencyNodeClass<FITSReader>();
 
 }

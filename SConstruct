@@ -94,7 +94,7 @@ options.Add(
 )
 
 options.Add(
-	BoolVariable( "WARNINGS_AS_ERRORS", "Treat compiler and linker warnings as errors.", True )
+	BoolVariable( "WARNINGS_AS_ERRORS", "Treat compiler and linker warnings as errors.", False )
 )
 
 options.Add(
@@ -545,7 +545,7 @@ libraries = {
 
 	"GafferAstro" : {
 		"envAppends" : {
-			"LIBS" : [ "Gaffer", "GafferImage" ],
+			"LIBS" : [ "Gaffer", "GafferImage", "tbb", "libCCFits", "cfitsio" ],
 		},
 		"pythonEnvAppends" : {
 			"LIBS" : [ "GafferAstro", "GafferImage" ],

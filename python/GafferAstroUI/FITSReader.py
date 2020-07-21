@@ -34,13 +34,53 @@
 #
 ##########################################################################
 
+import Gaffer
 import GafferAstro
-import GafferAstroUI
 
-import GafferUI
+Gaffer.Metadata.registerNode(
 
-nodeMenu = GafferUI.NodeMenu.acquire( application )
+	GafferAstro.FITSReader,
 
-nodeMenu.append( "/Image/Color/Colorise", GafferAstro.Colorise )
-nodeMenu.append( "/Image/Channels/AssembleChannels", GafferAstro.AssembleChannels )
-nodeMenu.append( "/Image/File/FITSReader", GafferAstro.FITSReader )
+	"description",
+	"""
+	Provides additional FITS read support.
+	""",
+
+	plugs = {
+
+		"fileName" : [
+
+			"description",
+			"""
+			The name of the file to be read. File sequences with
+			arbitrary padding may be specified using the '#' character
+			as a placeholder for the frame numbers.
+			""",
+
+			"plugValueWidget:type", "GafferUI.FileSystemPathPlugValueWidget",
+			"path:leaf", True,
+			"path:bookmarks", "fits",
+			"fileSystemPath:extensions", "fits",
+			"fileSystemPath:extensionsLabel", "Show only image files",
+			"fileSystemPath:includeSequences", True,
+
+		],
+
+		"refreshCount" : [
+
+			"description",
+			"""
+			May be incremented to force a reload if the file has
+			changed on disk - otherwise old contents may still
+			be loaded via Gaffer's cache.
+			""",
+
+			"plugValueWidget:type", "GafferUI.RefreshPlugValueWidget",
+			"layout:label", "",
+			"layout:accessory", True,
+
+		],
+
+	}
+
+)

@@ -34,8 +34,7 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef GAFFERASTRO_COLORISE_H
-#define GAFFERASTRO_COLORISE_H
+#pragma once
 
 #include "GafferAstro/Export.h"
 #include "GafferAstro/TypeIds.h"
@@ -111,5 +110,3 @@ class GAFFERASTRO_API Colorise : public FlatImageProcessor
 IE_CORE_DECLAREPTR( Colorise );
 
 } // namespace GafferAstro
-
-#endif // GAFFERASTRO_COLORISE_H

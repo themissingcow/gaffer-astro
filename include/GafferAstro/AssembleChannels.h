@@ -34,8 +34,7 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef GAFFERASTRO_ASSEMBLECHANNELS_H
-#define GAFFERASTRO_ASSEMBLECHANNELS_H
+#pragma once
 
 #include "GafferAstro/Export.h"
 #include "GafferAstro/TypeIds.h"
@@ -93,5 +92,3 @@ class GAFFERASTRO_API AssembleChannels : public ImageNode
 IE_CORE_DECLAREPTR( AssembleChannels );
 
 } // namespace GafferAstro
-
-#endif // GAFFERASTRO_ASSEMBLECHANNELS_H

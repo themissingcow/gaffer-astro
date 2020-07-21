@@ -32,15 +32,13 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef GAFFERASTRO_EXPORT_H
-#define GAFFERASTRO_EXPORT_H
+#pragma once
 
 #include "IECore/Export.h"
 
-#ifdef GafferImage_EXPORTS
+#ifdef GafferAstro_EXPORTS
 	#define GAFFERASTRO_API IECORE_EXPORT
 #else
 	#define GAFFERASTRO_API IECORE_IMPORT
 #endif
 
-#endif // #ifndef GAFFERASTRO_EXPORT_H

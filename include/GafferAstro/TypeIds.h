@@ -34,8 +34,7 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef GAFFERASTRO_TYPEIDS_H
-#define GAFFERASTRO_TYPEIDS_H
+#pragma once
 
 namespace GafferAstro
 {
@@ -44,10 +43,9 @@ enum TypeId
 {
 	ColoriseTypeId = 400100,
 	AssembleChannelsTypeId = 400101,
+	FITSReaderTypeId = 400102,
 
 	LastTypeId = 400199
 };
 
 } // namespace GaferAstro
-
-#endif // GAFFERASTRO_TYPEIDS_H

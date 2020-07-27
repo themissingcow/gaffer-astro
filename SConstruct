@@ -258,6 +258,7 @@ env = Environment(
 
 	CPPPATH = [
 		"include",
+		"./thirdparty/build/include",
 		"$LOCATE_DEPENDENCY_CPPPATH",
 	],
 
@@ -269,6 +270,7 @@ env = Environment(
 
 	LIBPATH = [
 		"./lib",
+		"./thirdparty/build/lib",
 		"$GAFFER_ROOT/lib",
 		"$LOCATE_DEPENDENCY_LIBPATH",
 	],
@@ -545,7 +547,7 @@ libraries = {
 
 	"GafferAstro" : {
 		"envAppends" : {
-			"LIBS" : [ "Gaffer", "GafferImage", "tbb", "libCCFits", "cfitsio" ],
+			"LIBS" : [ "Gaffer", "GafferImage", "tbb", "libCCfits", "cfitsio" ],
 		},
 		"pythonEnvAppends" : {
 			"LIBS" : [ "GafferAstro", "GafferImage", "GafferBindings" ],

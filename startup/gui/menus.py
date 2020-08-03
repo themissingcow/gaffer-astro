@@ -34,13 +34,28 @@
 #
 ##########################################################################
 
+import GafferImage
 import GafferAstro
 import GafferAstroUI
 
 import GafferUI
+
+# Nodes
 
 nodeMenu = GafferUI.NodeMenu.acquire( application )
 
 nodeMenu.append( "/Image/Color/Colorise", GafferAstro.Colorise )
 nodeMenu.append( "/Image/Channels/AssembleChannels", GafferAstro.AssembleChannels )
 nodeMenu.append( "/Image/File/FITSReader", GafferAstro.FITSReader )
+
+# Menu Bar
+
+scriptWindowMenu = GafferUI.ScriptWindow.menuDefinition( application )
+
+def clearImageCaches( menu ) :
+	scope = GafferUI.EditMenu.scope( menu )
+	for cls in ( GafferImage.ImageReader, GafferAstro.FITSReader ) :
+		for node in cls.RecursiveRange( scope.script ) :
+			node['refreshCount'].setValue( node['refreshCount'].getValue() + 1 )
+
+scriptWindowMenu.append( "/Tools/Astro/FlushImageCache", { "command" : clearImageCaches } )

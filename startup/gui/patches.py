@@ -34,14 +34,9 @@
 #
 ##########################################################################
 
-from . import AssembleChannelsUI
-from . import ColoriseUI
+import GafferUI
+import GafferAstroUI
 
-from .ColorChooser import ColorChooser
-from .ColorSliderPlugValueWidget import *
-from .ColorSwatchPlugValueWidget import ColorSwatchPlugValueWidget
-from .ExtendedColorPlugValueWidget import ExtendedColorPlugValueWidget
-from .RampPlugValueWidget import RampPlugValueWidget
-
-
-__import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstroUI" )
+GafferUI.ColorChooser = GafferAstroUI.ColorChooser
+GafferUI.ColorPlugValueWidget = GafferAstroUI.ExtendedColorPlugValueWidget
+GafferUI.RampPlugValueWidget = GafferAstroUI.RampPlugValueWidget

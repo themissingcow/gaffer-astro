@@ -48,6 +48,8 @@ nodeMenu.append( "/Image/Color/Colorise", GafferAstro.Colorise )
 nodeMenu.append( "/Image/Channels/AssembleChannels", GafferAstro.AssembleChannels )
 nodeMenu.append( "/Image/File/FITSReader", GafferAstro.FITSReader )
 
+nodeMenu.append( "/Astro/ColoriseSHO", GafferAstro.ColoriseSHO )
+
 # Menu Bar
 
 scriptWindowMenu = GafferUI.ScriptWindow.menuDefinition( application )

@@ -36,6 +36,7 @@
 
 from . import AssembleChannelsUI
 from . import ColoriseUI
+from . import ColoriseSHOUI
 
 from .ColorChooser import ColorChooser
 from .ColorSliderPlugValueWidget import *

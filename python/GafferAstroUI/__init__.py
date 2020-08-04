@@ -37,6 +37,7 @@
 from . import AssembleChannelsUI
 from . import ColoriseUI
 from . import ColoriseSHOUI
+from . import LoadSHOUI
 from . import StarsUI
 
 from .ColorChooser import ColorChooser

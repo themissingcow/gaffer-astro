@@ -49,6 +49,7 @@ nodeMenu.append( "/Image/Channels/AssembleChannels", GafferAstro.AssembleChannel
 nodeMenu.append( "/Image/File/FITSReader", GafferAstro.FITSReader )
 
 nodeMenu.append( "/Astro/ColoriseSHO", GafferAstro.ColoriseSHO )
+nodeMenu.append( "/Astro/Stars", GafferAstro.Stars )
 
 # Menu Bar
 

@@ -39,5 +39,6 @@ import GafferImage
 from ._GafferAstro import *
 
 from .ColoriseSHO import ColoriseSHO
+from .Stars import Stars
 
 __import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstro" )

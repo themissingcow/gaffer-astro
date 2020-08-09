@@ -34,13 +34,43 @@
 #
 ##########################################################################
 
+import Gaffer
+import GafferAstro
 import GafferImage
+import IECore
+import imath
 
-from ._GafferAstro import *
 
-from .ColoriseSHO import ColoriseSHO
-from .LoadSHO import LoadSHO
-from .ParentPath import ParentPath
-from .Stars import Stars
+class ParentPath( Gaffer.Node ) :
 
-__import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstro" )
+	def __init__( self, name = "ParentPath" ) :
+
+		Gaffer.Node.__init__( self, name )
+
+		self.addChild( Gaffer.StringPlug( "parentPath", defaultValue = "", flags = Gaffer.Plug.Flags.None ) )
+
+		self.parentChangedSignal().connect( Gaffer.WeakMethod( self.__parentChanged ), scoped = False )
+
+	def __parentChanged( self, *unused ) :
+
+		self.__parentConnections = []
+
+		update = Gaffer.WeakMethod( self.__update )
+		node = self.parent()
+		while node is not None and not isinstance( node, Gaffer.ScriptNode ) :
+			self.__parentConnections.append( node.nameChangedSignal().connect( update ) )
+			node = node.parent()
+
+		self.__update()
+
+	def __update( self, *unused ) :
+
+		path = ""
+
+		parent = self.parent()
+		if parent is not None :
+			path = parent.relativeName( parent.ancestor( Gaffer.ScriptNode ) )
+
+		self["parentPath"].setValue( path )
+
+IECore.registerRunTimeTyped( ParentPath, typeName = "GafferAstro::ParentPath" )

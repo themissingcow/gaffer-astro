@@ -41,6 +41,7 @@ from ._GafferAstro import *
 from .ColoriseSHO import ColoriseSHO
 from .LoadSHO import LoadSHO
 from .ParentPath import ParentPath
+from .Starnet import Starnet
 from .Stars import Stars
 
 __import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstro" )

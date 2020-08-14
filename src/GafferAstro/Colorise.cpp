@@ -65,7 +65,7 @@ size_t Colorise::g_firstPlugIndex = 0;
 IECore::StringVectorDataPtr Colorise::g_channelNames = new IECore::StringVectorData( { "R", "G", "B", "A" } );
 
 Colorise::Colorise( const std::string &name )
-	:	FlatImageProcessor( name, 1, 1 )
+	:	FlatImageProcessor( name )
 {
 	storeIndexOfNextChild( g_firstPlugIndex );
 

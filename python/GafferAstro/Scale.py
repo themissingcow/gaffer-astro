@@ -34,34 +34,42 @@
 #
 ##########################################################################
 
-import GafferImage
+import Gaffer
 import GafferAstro
-import GafferAstroUI
+import GafferImage
+import IECore
 
-import GafferUI
+import inspect
 
-# Nodes
 
-nodeMenu = GafferUI.NodeMenu.acquire( application )
+class Scale( GafferImage.ImageProcessor ) :
 
-nodeMenu.append( "/Image/Color/Colorise", GafferAstro.Colorise )
-nodeMenu.append( "/Image/Channels/AssembleChannels", GafferAstro.AssembleChannels )
-nodeMenu.append( "/Image/File/FITSReader", GafferAstro.FITSReader )
-nodeMenu.append( "/Image/Transform/Scale", GafferAstro.Scale )
+	def __init__( self, name = "Scale" ) :
 
-nodeMenu.append( "/Astro/ColoriseSHO", GafferAstro.ColoriseSHO )
-nodeMenu.append( "/Astro/LoadSHO", GafferAstro.LoadSHO )
-nodeMenu.append( "/Astro/Starnet", GafferAstro.Starnet )
-nodeMenu.append( "/Astro/Stars", GafferAstro.Stars )
+		GafferImage.ImageProcessor.__init__( self, name )
 
-# Menu Bar
+		self.addChild( Gaffer.FloatPlug( "factor", defaultValue = 1, minValue = 0 ) )
+		self.addChild( Gaffer.StringPlug( "filter", defaultValue = "sharp-gaussian" ) )
 
-scriptWindowMenu = GafferUI.ScriptWindow.menuDefinition( application )
+		self["__Resize"] = GafferImage.Resize()
+		self["__Resize"]["filter"].setInput( self["filter"] )
+		self["__Resize"]["in"].setInput( self["in"] )
 
-def clearImageCaches( menu ) :
-	scope = GafferUI.EditMenu.scope( menu )
-	for cls in ( GafferImage.ImageReader, GafferAstro.FITSReader ) :
-		for node in cls.RecursiveRange( scope.script ) :
-			node['refreshCount'].setValue( node['refreshCount'].getValue() + 1 )
+		self["out"].setInput( self["__Resize"]["out"] )
 
-scriptWindowMenu.append( "/Tools/Astro/FlushImageCache", { "command" : clearImageCaches } )
+		self["__Expression"] = Gaffer.Expression()
+		self["__Expression"].setExpression(
+			inspect.cleandoc( """
+			format = parent["__Resize"]["in"]["format"]
+			w = format.getDisplayWindow()
+			parent["__Resize"]["format"]["displayWindow"]["min"]["x"] = parent["factor"] * w.min().x
+			parent["__Resize"]["format"]["displayWindow"]["min"]["y"] = parent["factor"] * w.min().y
+			parent["__Resize"]["format"]["displayWindow"]["max"]["x"] = parent["factor"] * w.max().x
+			parent["__Resize"]["format"]["displayWindow"]["max"]["y"] = parent["factor"] * w.max().y
+			parent["__Resize"]["format"]["pixelAspect"] = format.getPixelAspect()
+			""" ),
+			"python"
+		)
+
+
+IECore.registerRunTimeTyped( Scale, typeName = "GafferAstro::Scale" )

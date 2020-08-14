@@ -41,6 +41,7 @@ from ._GafferAstro import *
 from .ColoriseSHO import ColoriseSHO
 from .LoadSHO import LoadSHO
 from .ParentPath import ParentPath
+from .Scale import Scale
 from .Starnet import Starnet
 from .Stars import Stars
 

@@ -48,6 +48,7 @@ nodeMenu.append( "/Image/Color/Colorise", GafferAstro.Colorise )
 nodeMenu.append( "/Image/Channels/AssembleChannels", GafferAstro.AssembleChannels )
 nodeMenu.append( "/Image/File/FITSReader", GafferAstro.FITSReader )
 nodeMenu.append( "/Image/Transform/Scale", GafferAstro.Scale )
+nodeMenu.append( "/Image/Transform/Trim", GafferAstro.Trim )
 
 nodeMenu.append( "/Astro/ColoriseSHO", GafferAstro.ColoriseSHO )
 nodeMenu.append( "/Astro/LoadSHO", GafferAstro.LoadSHO )

@@ -62,7 +62,7 @@ Gaffer.Metadata.registerNode(
 			"path:bookmarks", "fits",
 			"fileSystemPath:extensions", "fits",
 			"fileSystemPath:extensionsLabel", "Show only image files",
-			"fileSystemPath:includeSequences", True,
+			"fileSystemPath:includeSequences", False,
 
 		],
 

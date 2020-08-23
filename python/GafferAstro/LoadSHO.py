@@ -20,19 +20,19 @@ class LoadSHO( GafferImage.ImageNode ) :
 		self["out"].setInput( assembleChannels["out"] )
 		assembleChannels["in"].addChild( Gaffer.NameValuePlug( "", GafferImage.ImagePlug( "value", ), True, "in2", Gaffer.Plug.Flags.Default | Gaffer.Plug.Flags.Dynamic ) )
 
-		channels = {
+		channelNames = {
 			"Sii" : "Sulphur_II",
 			"Ha" : "Hydrogen-alpha",
 			"Oiii" : "Oxygen_III"
 		}
 
-		for index, channel in enumerate( channels ) :
+		for index, channel in enumerate( GafferAstro.NarrowbandChannels ) :
 
 			self.addChild( Gaffer.BoolPlug( "enabled%s" % channel, defaultValue = True ) )
 			self.addChild( Gaffer.FloatPlug( "blackPoint%s" % channel, defaultValue = 0.0 ) )
 			self.addChild( Gaffer.FloatPlug( "whitePoint%s" % channel, defaultValue = 1.0 ) )
 			self.addChild( Gaffer.FloatPlug( "gamma%s" % channel, defaultValue = 1.0 ) )
-			self.addChild( Gaffer.StringPlug( "channelName%s" % channel, defaultValue = channels[channel] ) )
+			self.addChild( Gaffer.StringPlug( "channelName%s" % channel, defaultValue = channelNames.get( channel, channel ) ) )
 
 			reader = GafferAstro.FITSReader()
 			self["__FITSReader_%s" % channel] = reader

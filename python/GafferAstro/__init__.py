@@ -45,4 +45,6 @@ from .Scale import Scale
 from .Starnet import Starnet
 from .Trim import Trim
 
+NarrowbandChannels = ( "Sii", "Ha", "Oiii" )
+
 __import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstro" )

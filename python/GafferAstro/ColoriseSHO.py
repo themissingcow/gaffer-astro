@@ -43,8 +43,6 @@ import imath
 
 class ColoriseSHO( GafferImage.ImageProcessor ) :
 
-	__channels = ( "Sii", "Ha", "Oiii" )
-
 	__mapDefaults = {
 
 		"Sii" : Gaffer.SplineDefinitionfColor4f(
@@ -98,7 +96,7 @@ class ColoriseSHO( GafferImage.ImageProcessor ) :
 		outputSwitch["index"].setInput( self["show"] )
 		outputSwitch["in"][ 0 ].setInput( merge["out"] )
 
-		for channel in self.__channels :
+		for channel in GafferAstro.NarrowbandChannels :
 
 			self.addChild( Gaffer.StringPlug( "source%s" % channel, defaultValue = 'input' ) )
 			self.addChild( Gaffer.V2fPlug( "range%s" % channel, defaultValue = imath.V2f( 0, 1 ) ) )

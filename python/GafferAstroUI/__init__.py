@@ -40,7 +40,6 @@ from . import ColoriseSHOUI
 from . import LoadSHOUI
 from . import ScaleUI
 from . import StarnetUI
-from . import StarsUI
 
 from .ColorChooser import ColorChooser
 from .ColorSliderPlugValueWidget import *

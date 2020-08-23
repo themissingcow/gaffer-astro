@@ -43,7 +43,6 @@ from .LoadSHO import LoadSHO
 from .ParentPath import ParentPath
 from .Scale import Scale
 from .Starnet import Starnet
-from .Stars import Stars
 from .Trim import Trim
 
 __import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstro" )

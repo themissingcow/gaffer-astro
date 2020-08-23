@@ -48,8 +48,8 @@ class Scale( GafferImage.ImageProcessor ) :
 
 		GafferImage.ImageProcessor.__init__( self, name )
 
-		self.addChild( Gaffer.FloatPlug( "factor", defaultValue = 1, minValue = 0 ) )
-		self.addChild( Gaffer.StringPlug( "filter", defaultValue = "sharp-gaussian" ) )
+		self["factor"] = Gaffer.FloatPlug( defaultValue = 1, minValue = 0 )
+		self["filter"] = Gaffer.StringPlug( defaultValue = "sharp-gaussian" )
 
 		self["__Resize"] = GafferImage.Resize()
 		self["__Resize"]["filter"].setInput( self["filter"] )
@@ -60,13 +60,13 @@ class Scale( GafferImage.ImageProcessor ) :
 		self["__Expression"] = Gaffer.Expression()
 		self["__Expression"].setExpression(
 			inspect.cleandoc( """
-			format = parent["__Resize"]["in"]["format"]
-			w = format.getDisplayWindow()
-			parent["__Resize"]["format"]["displayWindow"]["min"]["x"] = parent["factor"] * w.min().x
-			parent["__Resize"]["format"]["displayWindow"]["min"]["y"] = parent["factor"] * w.min().y
-			parent["__Resize"]["format"]["displayWindow"]["max"]["x"] = parent["factor"] * w.max().x
-			parent["__Resize"]["format"]["displayWindow"]["max"]["y"] = parent["factor"] * w.max().y
-			parent["__Resize"]["format"]["pixelAspect"] = format.getPixelAspect()
+				format = parent["__Resize"]["in"]["format"]
+				w = format.getDisplayWindow()
+				parent["__Resize"]["format"]["displayWindow"]["min"]["x"] = parent["factor"] * w.min().x
+				parent["__Resize"]["format"]["displayWindow"]["min"]["y"] = parent["factor"] * w.min().y
+				parent["__Resize"]["format"]["displayWindow"]["max"]["x"] = parent["factor"] * w.max().x
+				parent["__Resize"]["format"]["displayWindow"]["max"]["y"] = parent["factor"] * w.max().y
+				parent["__Resize"]["format"]["pixelAspect"] = format.getPixelAspect()
 			""" ),
 			"python"
 		)

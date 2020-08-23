@@ -12,13 +12,13 @@ class LoadSHO( GafferImage.ImageNode ) :
 
 		GafferImage.ImageNode.__init__( self, name )
 
-		self.addChild( Gaffer.StringPlug( "fileName" ) )
-		self.addChild( Gaffer.FloatPlug( "resize", defaultValue = 1.0, minValue = 0.001 ) )
+		self["fileName"] = Gaffer.StringPlug( "fileName" )
+		self["resize"] = Gaffer.FloatPlug( defaultValue = 1.0, minValue = 0.001 )
 
 		assembleChannels = GafferAstro.AssembleChannels()
 		self["__AssembleChannels"] = assembleChannels
 		self["out"].setInput( assembleChannels["out"] )
-		assembleChannels["in"].addChild( Gaffer.NameValuePlug( "", GafferImage.ImagePlug( "value", ), True, "in2", Gaffer.Plug.Flags.Default | Gaffer.Plug.Flags.Dynamic ) )
+		assembleChannels["in"].addChild( Gaffer.NameValuePlug( "", GafferImage.ImagePlug( "value", ), True, "in2" ) )
 
 		channelNames = {
 			"Sii" : "Sulphur_II",
@@ -28,11 +28,11 @@ class LoadSHO( GafferImage.ImageNode ) :
 
 		for index, channel in enumerate( GafferAstro.NarrowbandChannels ) :
 
-			self.addChild( Gaffer.BoolPlug( "enabled%s" % channel, defaultValue = True ) )
-			self.addChild( Gaffer.FloatPlug( "blackPoint%s" % channel, defaultValue = 0.0 ) )
-			self.addChild( Gaffer.FloatPlug( "whitePoint%s" % channel, defaultValue = 1.0 ) )
-			self.addChild( Gaffer.FloatPlug( "gamma%s" % channel, defaultValue = 1.0 ) )
-			self.addChild( Gaffer.StringPlug( "channelName%s" % channel, defaultValue = channelNames.get( channel, channel ) ) )
+			self["enabled%s" % channel] = Gaffer.BoolPlug( defaultValue = True )
+			self["blackPoint%s" % channel] = Gaffer.FloatPlug( defaultValue = 0.0 )
+			self["whitePoint%s" % channel] = Gaffer.FloatPlug( defaultValue = 1.0 )
+			self["gamma%s" % channel] = Gaffer.FloatPlug( defaultValue = 1.0 )
+			self["channelName%s" % channel] = Gaffer.StringPlug( defaultValue = channelNames.get( channel, channel ) )
 
 			reader = GafferAstro.FITSReader()
 			self["__FITSReader_%s" % channel] = reader
@@ -63,10 +63,10 @@ class LoadSHO( GafferImage.ImageNode ) :
 		self["__Expression_FileName"] = Gaffer.Expression()
 		self["__Expression_FileName"].setExpression(
 			inspect.cleandoc( """
-			# Paths
-			parent["__FITSReader_Sii"]["fileName"] = parent["fileName"].format( channel = parent["channelNameSii"] )
-			parent["__FITSReader_Ha"]["fileName"] = parent["fileName"].format( channel = parent["channelNameHa"] )
-			parent["__FITSReader_Oiii"]["fileName"] = parent["fileName"].format( channel = parent["channelNameOiii"] )
+				# Paths
+				parent["__FITSReader_Sii"]["fileName"] = parent["fileName"].format( channel = parent["channelNameSii"] )
+				parent["__FITSReader_Ha"]["fileName"] = parent["fileName"].format( channel = parent["channelNameHa"] )
+				parent["__FITSReader_Oiii"]["fileName"] = parent["fileName"].format( channel = parent["channelNameOiii"] )
 			""" ),
 			"python"
 		)

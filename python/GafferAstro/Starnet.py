@@ -12,11 +12,11 @@ class Starnet( GafferDispatch.TaskNode ) :
 
 		GafferDispatch.TaskNode.__init__( self, name )
 
-		self.addChild( GafferImage.ImagePlug( "in" ) )
+		self["in"] = GafferImage.ImagePlug( "in" )
 
-		self.addChild( Gaffer.StringPlug( "fileName", defaultValue = '', ) )
-		self.addChild( Gaffer.StringPlug( "channels", defaultValue = 'Y', ) )
-		self.addChild( Gaffer.StringPlug( "dataType", defaultValue = 'float', ) )
+		self["fileName"] = Gaffer.StringPlug( defaultValue = '', )
+		self["channels"] = Gaffer.StringPlug( defaultValue = 'Y', )
+		self["dataType"] = Gaffer.StringPlug( defaultValue = 'float', )
 
 		imageWriter = GafferImage.ImageWriter()
 		self["__ImageWriter"] = imageWriter
@@ -29,7 +29,7 @@ class Starnet( GafferDispatch.TaskNode ) :
 		imageReader["missingFrameMode"].setValue( 1 )
 		imageReader["fileName"].setInput( self["fileName"] )
 
-		self.addChild( GafferImage.ImagePlug( "out", direction = Gaffer.Plug.Direction.Out ) )
+		self["out"] = GafferImage.ImagePlug( direction = Gaffer.Plug.Direction.Out )
 		self["out"].setInput( imageReader["out"] )
 
 		sysStarnet = GafferDispatch.SystemCommand()
@@ -53,14 +53,14 @@ class Starnet( GafferDispatch.TaskNode ) :
 		self["task"].setInput( sysCleanup["task"] )
 
 		# Expressions
-		self["Expression"] = Gaffer.Expression()
-		self["Expression"].setExpression(
+		self["__Expression"] = Gaffer.Expression()
+		self["__Expression"].setExpression(
 			inspect.cleandoc( """
-			fileName = parent["fileName"]
-			if fileName and not fileName.endswith( ".tif" ) :
-				raise ValueError( "fileName must be a .tif file" )
-			tmpName = fileName.replace( ".tif", "-input.tif" )
-			parent["__ImageWriter"]["fileName"] = tmpName
+				fileName = parent["fileName"]
+				if fileName and not fileName.endswith( ".tif" ) :
+					raise ValueError( "fileName must be a .tif file" )
+				tmpName = fileName.replace( ".tif", "-input.tif" )
+				parent["__ImageWriter"]["fileName"] = tmpName
 			""" ),
 			"python"
 		)

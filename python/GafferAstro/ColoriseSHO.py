@@ -82,7 +82,7 @@ class ColoriseSHO( GafferImage.ImageProcessor ) :
 
 		GafferImage.ImageProcessor.__init__( self, name )
 
-		self.addChild( Gaffer.IntPlug( "show", defaultValue = 0, minValue = 0, maxValue = 3 ) )
+		self["show"] = Gaffer.IntPlug( defaultValue = 0, minValue = 0, maxValue = 3 )
 
 		# Channel colorising
 
@@ -98,14 +98,14 @@ class ColoriseSHO( GafferImage.ImageProcessor ) :
 
 		for channel in GafferAstro.NarrowbandChannels :
 
-			self.addChild( Gaffer.StringPlug( "source%s" % channel, defaultValue = 'input' ) )
-			self.addChild( Gaffer.V2fPlug( "range%s" % channel, defaultValue = imath.V2f( 0, 1 ) ) )
-			self.addChild( Gaffer.SplinefColor4fPlug( "map%s" % channel, defaultValue = self.__mapDefaults[ channel ] ) )
-			self.addChild( Gaffer.FloatPlug( "saturation%s" % channel, defaultValue = 1.0, minValue = 0.0 ) )
-			self.addChild( Gaffer.FloatPlug( "multiply%s" % channel, defaultValue = 1.0 ) )
-			self.addChild( Gaffer.FloatPlug( "gamma%s" % channel, defaultValue = 1.0 ) )
+			self["source%s" % channel] = Gaffer.StringPlug( defaultValue = 'input' )
+			self["range%s" % channel] = Gaffer.V2fPlug( defaultValue = imath.V2f( 0, 1 ) )
+			self["map%s" % channel] = Gaffer.SplinefColor4fPlug( defaultValue = self.__mapDefaults[ channel ] )
+			self["saturation%s" % channel] = Gaffer.FloatPlug( defaultValue = 1.0, minValue = 0.0 )
+			self["multiply%s" % channel] = Gaffer.FloatPlug( defaultValue = 1.0 )
+			self["gamma%s" % channel] = Gaffer.FloatPlug( defaultValue = 1.0 )
 
-			colorise =  GafferAstro.Colorise( "Colorise_%s" % channel )
+			colorise =  GafferAstro.Colorise()
 			self["__Colorise_%s" % channel ] = colorise
 
 			colorise["in"].setInput( self["in"] )
@@ -116,7 +116,7 @@ class ColoriseSHO( GafferImage.ImageProcessor ) :
 			colorise["map"].setInput( self["map%s" % channel ] )
 
 			inputExpression = Gaffer.Expression()
-			self.addChild( inputExpression )
+			self["__Expression_Input"] = inputExpression
 			expr = 'parent["__Colorise_{channel}"]["channel"] = "%s.{channel}" % parent["source{channel}"]'
 			inputExpression.setExpression( expr.format( channel = channel ), "python" )
 
@@ -136,11 +136,11 @@ class ColoriseSHO( GafferImage.ImageProcessor ) :
 			merge["in"][ len(merge["in"]) - 1 ].setInput( grade["out"] )
 			outputSwitch["in"][ len(outputSwitch["in"]) - 1 ].setInput( grade["out"] )
 
-		self.addChild( Gaffer.FloatPlug( "saturation", defaultValue = 1.0, minValue = 0.0 ) )
-		self.addChild( Gaffer.FloatPlug( "blackPoint", defaultValue = 0.0 ) )
-		self.addChild( Gaffer.FloatPlug( "whitePoint", defaultValue = 1.0 ) )
-		self.addChild( Gaffer.Color4fPlug( "multiply", defaultValue = imath.Color4f( 1, 1, 1, 1 ) ) )
-		self.addChild( Gaffer.FloatPlug( "gamma", defaultValue = 1.0, minValue = 0.0 ) )
+		self["saturation"] = Gaffer.FloatPlug( defaultValue = 1.0, minValue = 0.0 )
+		self["blackPoint"] = Gaffer.FloatPlug( defaultValue = 0.0 )
+		self["whitePoint"] = Gaffer.FloatPlug( defaultValue = 1.0 )
+		self["multiply"] = Gaffer.Color4fPlug( defaultValue = imath.Color4f( 1, 1, 1, 1 ) )
+		self["gamma"] = Gaffer.FloatPlug( defaultValue = 1.0, minValue = 0.0 )
 
 		outputCdl = GafferImage.CDL()
 		self["__CDL_output"] = outputCdl

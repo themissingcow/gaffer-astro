@@ -47,7 +47,7 @@ class ParentPath( Gaffer.Node ) :
 
 		Gaffer.Node.__init__( self, name )
 
-		self.addChild( Gaffer.StringPlug( "parentPath", defaultValue = "", flags = Gaffer.Plug.Flags.None ) )
+		self["parentPath"] = Gaffer.StringPlug( defaultValue = "", flags = Gaffer.Plug.Flags.None )
 
 		self.parentChangedSignal().connect( Gaffer.WeakMethod( self.__parentChanged ), scoped = False )
 

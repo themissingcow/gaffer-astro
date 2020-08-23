@@ -50,11 +50,11 @@ class Trim( GafferImage.ImageProcessor ) :
 
 		GafferImage.ImageProcessor.__init__( self, name )
 
-		self.addChild( Gaffer.BoolPlug( "flipHorizontal" ) )
-		self.addChild( Gaffer.BoolPlug( "flipVertical" ) )
-		self.addChild( Gaffer.FloatPlug( "rotate" ) )
-		self.addChild( Gaffer.BoolPlug( "applyCrop", defaultValue = False ) )
-		self.addChild( Gaffer.Box2fPlug( "crop", defaultValue = imath.Box2f( imath.V2f(0), imath.V2f(1) ) ) )
+		self["flipHorizontal"] =  Gaffer.BoolPlug()
+		self["flipVertical"] = Gaffer.BoolPlug()
+		self["rotate"] = Gaffer.FloatPlug()
+		self["applyCrop"] = Gaffer.BoolPlug( defaultValue = False )
+		self["crop"] = Gaffer.Box2fPlug( defaultValue = imath.Box2f( imath.V2f(0), imath.V2f(1) ) )
 
 		mirror = GafferImage.Mirror()
 		self["__Mirror"] = mirror
@@ -72,9 +72,9 @@ class Trim( GafferImage.ImageProcessor ) :
 		self["__Expression_Transform"] = transformCenterExpr
 		transformCenterExpr.setExpression(
 			inspect.cleandoc("""
-			import imath
-			f = parent["__Transform"]["in"]["format"]
-			parent["__Transform"]["transform"]["pivot"] = imath.V2f( f.width() / 2.0, f.height() / 2.0 )
+				import imath
+				f = parent["__Transform"]["in"]["format"]
+				parent["__Transform"]["transform"]["pivot"] = imath.V2f( f.width() / 2.0, f.height() / 2.0 )
 			"""),
 			"python"
 		)

@@ -98,7 +98,7 @@ class ColoriseSHO( GafferImage.ImageProcessor ) :
 
 		for channel in GafferAstro.NarrowbandChannels :
 
-			self["source%s" % channel] = Gaffer.StringPlug( defaultValue = 'input' )
+			self["source%s" % channel] = Gaffer.StringPlug( defaultValue = 'input.%s' % channel )
 			self["range%s" % channel] = Gaffer.V2fPlug( defaultValue = imath.V2f( 0, 1 ) )
 			self["map%s" % channel] = Gaffer.SplinefColor4fPlug( defaultValue = self.__mapDefaults[ channel ] )
 			self["saturation%s" % channel] = Gaffer.FloatPlug( defaultValue = 1.0, minValue = 0.0 )
@@ -109,16 +109,12 @@ class ColoriseSHO( GafferImage.ImageProcessor ) :
 			self["__Colorise_%s" % channel ] = colorise
 
 			colorise["in"].setInput( self["in"] )
+			colorise["channel"].setInput( self["source%s" % channel] )
 			colorise["mapEnabled"].setValue( True )
 			colorise["range"].setInput( self["range%s" % channel ] )
 			# Work around issue where setInput doesn't sync the number of knots
 			colorise["map"].setValue( self["map%s" % channel ].getValue() )
 			colorise["map"].setInput( self["map%s" % channel ] )
-
-			inputExpression = Gaffer.Expression()
-			self["__Expression_Input"] = inputExpression
-			expr = 'parent["__Colorise_{channel}"]["channel"] = "%s.{channel}" % parent["source{channel}"]'
-			inputExpression.setExpression( expr.format( channel = channel ), "python" )
 
 			cdl = GafferImage.CDL()
 			self["__CDL_%s" % channel ] = cdl

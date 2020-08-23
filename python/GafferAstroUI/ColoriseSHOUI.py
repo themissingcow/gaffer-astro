@@ -29,11 +29,9 @@ Gaffer.Metadata.registerNode(
 		],
 
 		"sourceSii" : [
-			'nodule:type', '',
 			'label', 'Source',
-			'preset:Starnet', 'starnet',
-			'preset:Normal', 'input',
-			'plugValueWidget:type', 'GafferUI.PresetsPlugValueWidget',
+			'preset:Starnet', 'starnet.Sii',
+			'preset:Normal', 'input.Sii',
 			'layout:section', 'Settings.Sii',
 			'layout:index', 3,
 		],
@@ -78,10 +76,8 @@ Gaffer.Metadata.registerNode(
 
 
 		"sourceHa" : [
-			'nodule:type', '',
-			'preset:Starnet', 'starnet',
-			'preset:Normal', 'input',
-			'plugValueWidget:type', 'GafferUI.PresetsPlugValueWidget',
+			'preset:Starnet', 'starnet.Ha',
+			'preset:Normal', 'input.Ha',
 			'layout:section', 'Settings.Ha',
 			'layout:index', 9,
 		],
@@ -125,10 +121,8 @@ Gaffer.Metadata.registerNode(
 		],
 
 		"sourceOiii" : [
-			'nodule:type', '',
-			'preset:Starnet', 'starnet',
-			'preset:Normal', 'input',
-			'plugValueWidget:type', 'GafferUI.PresetsPlugValueWidget',
+			'preset:Starnet', 'starnet.Oii',
+			'preset:Normal', 'input.Oii',
 			'layout:section', 'Settings.Oiii',
 			'layout:index', 15,
 		],

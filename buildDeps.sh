@@ -10,7 +10,7 @@ cd ./thirdparty
 
 mkdir -p ./build/share
 cat << EOF > ./build/share/config.site
-CPPFLAGS='-I`pwd`/build/include -fPIC'
+CPPFLAGS='-I`pwd`/build/include -fPIC -std=c++11 -D_GLIBCXX_USE_CXX11_ABI=0'
 LDFLAGS=-L`pwd`/build/lib
 EOF
 

@@ -16,7 +16,7 @@ class Starnet( GafferDispatch.TaskNode ) :
 
 		self["fileName"] = Gaffer.StringPlug( defaultValue = '', )
 		self["channels"] = Gaffer.StringPlug( defaultValue = 'Y', )
-		self["dataType"] = Gaffer.StringPlug( defaultValue = 'float', )
+		self["dataType"] = Gaffer.StringPlug( defaultValue = 'uint16', )
 
 		imageWriter = GafferImage.ImageWriter()
 		self["__ImageWriter"] = imageWriter
@@ -34,7 +34,7 @@ class Starnet( GafferDispatch.TaskNode ) :
 
 		sysStarnet = GafferDispatch.SystemCommand()
 		self["__SystemCommand_starnet"] = sysStarnet
-		sysStarnet["command"].setValue( 'starnet "{input}" "{output}"' )
+		sysStarnet["command"].setValue( 'starnet -v "{input}" "{output}"' )
 		sysStarnet["shell"].setValue( False )
 		sysStarnet["substitutions"].addChild( Gaffer.NameValuePlug( "input", IECore.StringData( "" ) ) )
 		sysStarnet["substitutions"].addChild( Gaffer.NameValuePlug( "output", IECore.StringData( "" ) ) )

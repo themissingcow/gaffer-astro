@@ -11,3 +11,5 @@
 .vscode
 config.log
 cmake-build-*
+env.bash
+thirdparty

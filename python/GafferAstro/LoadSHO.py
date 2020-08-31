@@ -55,7 +55,7 @@ class LoadSHO( GafferImage.ImageNode ) :
 			grade["in"].setInput( scale["out"] )
 
 			assembleChannels["in"][index]["value"].setInput( grade["out"] )
-			assembleChannels["in"][index]["name"].setValue( "input.%s:Y" % channel )
+			assembleChannels["in"][index]["name"].setValue( "%s.input:Y" % channel )
 			assembleChannels["in"][index]["enabled"].setInput( self["enabled%s" % channel] )
 
 		# Expressions

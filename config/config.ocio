@@ -1,11 +1,11 @@
 ocio_profile_version: 1
 
-search_path: /$GAFFER_ROOT/openColorIO/luts
+search_path: luts
 strictparsing: true
 luma: [0.2126, 0.7152, 0.0722]
 
 roles:
-  color_picking: raw
+  color_picking: sRGB
   color_timing: Cineon
   compositing_log: Cineon
   data: raw
@@ -19,10 +19,11 @@ displays:
   default:
     - !<View> {name: None, colorspace: raw}
     - !<View> {name: sRGB, colorspace: sRGB}
+    - !<View> {name: sRGB (P3 display), colorspace: sRGBp3}
     - !<View> {name: rec709, colorspace: rec709}
 
 active_displays: [default]
-active_views: [None]
+active_views: [sRGB]
 
 colorspaces:
   - !<ColorSpace>
@@ -47,6 +48,21 @@ colorspaces:
     allocation: uniform
     allocationvars: [-0.125, 1.125]
     to_reference: !<FileTransform> {src: srgb.spi1d, interpolation: linear}
+
+  - !<ColorSpace>
+    name: sRGBp3
+    family: ""
+    equalitygroup: ""
+    bitdepth: 32f
+    description: |
+      Standard RGB Display Space (P3 Display)
+    isdata: false
+    allocation: uniform
+    allocationvars: [-0.125, 1.125]
+    to_reference: !<GroupTransform>
+      children:
+        - !<FileTransform> {src: srgb.spi1d, interpolation: linear}
+        - !<FileTransform> {src: srgb_to_p3d65.spimtx, interpolation: linear, direction: inverse}
 
   - !<ColorSpace>
     name: sRGBf

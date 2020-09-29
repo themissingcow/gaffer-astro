@@ -18,9 +18,10 @@ roles:
 displays:
   default:
     - !<View> {name: None, colorspace: raw}
-    - !<View> {name: sRGB, colorspace: sRGB}
-    - !<View> {name: sRGB (P3 display), colorspace: sRGBp3}
-    - !<View> {name: rec709, colorspace: rec709}
+    - !<View> {name: Linear Working Space (sRGB), colorspace: sRGB}
+    - !<View> {name: Linear Working Space (P3), colorspace: p3}
+    - !<View> {name: sRGB Working Space (sRGB), colorspace: linear}
+    - !<View> {name: sRGB Working Space (P3), colorspace: sRGB_to_p3}
 
 active_displays: [default]
 active_views: [sRGB]
@@ -50,7 +51,7 @@ colorspaces:
     to_reference: !<FileTransform> {src: srgb.spi1d, interpolation: linear}
 
   - !<ColorSpace>
-    name: sRGBp3
+    name: p3
     family: ""
     equalitygroup: ""
     bitdepth: 32f
@@ -61,8 +62,20 @@ colorspaces:
     allocationvars: [-0.125, 1.125]
     to_reference: !<GroupTransform>
       children:
-        - !<FileTransform> {src: srgb.spi1d, interpolation: linear}
         - !<FileTransform> {src: srgb_to_p3d65.spimtx, interpolation: linear, direction: inverse}
+        - !<FileTransform> {src: srgb.spi1d, interpolation: linear}
+
+  - !<ColorSpace>
+    name: sRGB_to_p3
+    family: ""
+    equalitygroup: ""
+    bitdepth: 32f
+    description: |
+      Standard RGB Display Space (P3 Display)
+    isdata: false
+    allocation: uniform
+    allocationvars: [-0.125, 1.125]
+    from_reference: !<FileTransform> {src: srgb_to_p3d65.spimtx, interpolation: linear}
 
   - !<ColorSpace>
     name: sRGBf
@@ -75,18 +88,6 @@ colorspaces:
     allocation: uniform
     allocationvars: [-0.125, 4.875]
     to_reference: !<FileTransform> {src: srgbf.spi1d, interpolation: linear}
-
-  - !<ColorSpace>
-    name: rec709
-    family: ""
-    equalitygroup: ""
-    bitdepth: 32f
-    description: |
-      Rec. 709 (Full Range) Display Space
-    isdata: false
-    allocation: uniform
-    allocationvars: [-0.125, 1.125]
-    to_reference: !<FileTransform> {src: rec709.spi1d, interpolation: linear}
 
   - !<ColorSpace>
     name: Cineon

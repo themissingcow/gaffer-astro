@@ -98,7 +98,7 @@ class ColoriseSHO( GafferImage.ImageProcessor ) :
 
 		for channel in GafferAstro.NarrowbandChannels :
 
-			self["source%s" % channel] = Gaffer.StringPlug( defaultValue = 'input.%s' % channel )
+			self["source%s" % channel] = Gaffer.StringPlug( defaultValue = '%s.input' % channel )
 			self["range%s" % channel] = Gaffer.V2fPlug( defaultValue = imath.V2f( 0, 1 ) )
 			self["map%s" % channel] = Gaffer.SplinefColor4fPlug( defaultValue = self.__mapDefaults[ channel ] )
 			self["saturation%s" % channel] = Gaffer.FloatPlug( defaultValue = 1.0, minValue = 0.0 )

@@ -47,6 +47,7 @@ nodeMenu = GafferUI.NodeMenu.acquire( application )
 nodeMenu.append( "/Image/Color/Colorise", GafferAstro.Colorise )
 nodeMenu.append( "/Image/Channels/AssembleChannels", GafferAstro.AssembleChannels )
 nodeMenu.append( "/Image/File/FITSReader", GafferAstro.FITSReader )
+nodeMenu.append( "/Image/File/LoadFITS", GafferAstro.LoadFITS )
 nodeMenu.append( "/Image/Transform/Scale", GafferAstro.Scale )
 nodeMenu.append( "/Image/Transform/Trim", GafferAstro.Trim )
 

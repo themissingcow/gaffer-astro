@@ -89,17 +89,21 @@ class RampPlugValueWidget( GafferUI.PlugValueWidget ) :
 			self.__lastPositionChangedReason = None
 			self.__positionsMergeGroupId = 0
 
-			with GafferUI.ListContainer( GafferUI.ListContainer.Orientation.Horizontal, spacing = 10 ) :
+			with GafferUI.GridContainer( spacing = 10 ) as grid :
 
 				self.__positionLabel = GafferUI.LabelPlugValueWidget( plug.pointXPlug( 0 ) )
 				self.__positionField = GafferUI.NumericPlugValueWidget( plug.pointXPlug( 0 ) )
-				self.__positionField._qtWidget().setSizePolicy( QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum )
 
 				self.__valueLabel = GafferUI.LabelPlugValueWidget( plug.pointYPlug( 0 ) )
 				if isinstance( plug.pointYPlug( 0 ), Gaffer.FloatPlug ):
 					self.__valueField = GafferUI.NumericPlugValueWidget( plug.pointYPlug( 0 ) )
 				else:
-					self.__valueField = GafferAstroUI.ExtendedColorPlugValueWidget( plug.pointYPlug( 0 ) )
+					self.__valueField = GafferAstroUI.ColorSlidersPlugValueWidget( plug.pointYPlug( 0 ) )
+
+				grid[ 0, 0 ] = self.__positionLabel
+				grid[ 1, 0 ] = self.__positionField
+				grid[ 0, 1 ] = self.__valueLabel
+				grid[ 1, 1 ] = self.__valueField
 
 		self.setPlug( plug )
 

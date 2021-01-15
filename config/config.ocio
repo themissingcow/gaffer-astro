@@ -5,28 +5,29 @@ strictparsing: true
 luma: [0.2126, 0.7152, 0.0722]
 
 roles:
-  color_picking: sRGB
+  color_picking: sRGB OETF
   color_timing: Cineon
   compositing_log: Cineon
   data: raw
   default: raw
-  matte_paint: sRGB
+  matte_paint: sRGB OETF
   reference: linear
   scene_linear: linear
-  texture_paint: sRGB
+  texture_paint: sRGB OETF
 
 displays:
   default:
     - !<View> {name: None, colorspace: raw}
-    - !<View> {name: Linear Working Space (sRGB), colorspace: sRGB}
-    - !<View> {name: Linear Working Space (P3), colorspace: p3}
+    - !<View> {name: Linear Working Space (sRGB), colorspace: sRGB OETF}
+    - !<View> {name: Linear Working Space (P3), colorspace: AppleP3 sRGB OETF}
     - !<View> {name: sRGB Working Space (sRGB), colorspace: linear}
     - !<View> {name: sRGB Working Space (P3), colorspace: sRGB_to_p3}
 
-active_displays: [default]
+active_displays: [sRGB, P3]
 active_views: [sRGB]
 
 colorspaces:
+
   - !<ColorSpace>
     name: linear
     family: ""
@@ -39,31 +40,45 @@ colorspaces:
     allocationvars: [-15, 6]
 
   - !<ColorSpace>
-    name: sRGB
-    family: ""
-    equalitygroup: ""
+    name: sRGB OETF
+    family:
+    equalitygroup:
     bitdepth: 32f
     description: |
-      Standard RGB Display Space
+      sRGB specification display referred Optical-Electro Transfer Function.
     isdata: false
     allocation: uniform
-    allocationvars: [-0.125, 1.125]
-    to_reference: !<FileTransform> {src: srgb.spi1d, interpolation: linear}
+    allocationvars: [0.0, 1.0]
+    to_reference: !<FileTransform> {src: sRGB_OETF_to_Linear.spi1d, interpolation: linear}
 
   - !<ColorSpace>
-    name: p3
-    family: ""
+    name: Apple DCI-P3 D65
+    family: display
     equalitygroup: ""
     bitdepth: 32f
-    description: |
-      Standard RGB Display Space (P3 Display)
     isdata: false
-    allocation: uniform
-    allocationvars: [-0.125, 1.125]
+    allocation: lg2
+    allocationvars: [-12.4739, 12.5261]
     to_reference: !<GroupTransform>
       children:
-        - !<FileTransform> {src: srgb_to_p3d65.spimtx, interpolation: linear, direction: inverse}
-        - !<FileTransform> {src: srgb.spi1d, interpolation: linear}
+        - !<MatrixTransform> {matrix: [0.515121, 0.291977, 0.157104, 0, 0.241196, 0.692245, 0.0665741, 0, -0.00105286, 0.0418854, 0.784073, 0, 0, 0, 0, 1]}
+        - !<MatrixTransform> {matrix: [1.04788, 0.0229187, -0.0502014, 0, 0.0295868, 0.990479, -0.0170593, 0, -0.00923157, 0.0150757, 0.751678, 0, 0, 0, 0, 1], direction: inverse}
+        - !<MatrixTransform> {matrix: [0.412391, 0.357584, 0.180481, 0, 0.212639, 0.715169, 0.0721923, 0, 0.0193308, 0.119195, 0.950532, 0, 0, 0, 0, 1], direction: inverse}
+
+  - !<ColorSpace>
+    name: AppleP3 sRGB OETF
+    family:
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      sRGB specification display referred Optical-Electro Transfer Function with Apple DCI-P3 primaries.
+    isdata: false
+    allocation: uniform
+    allocationvars: [0.0, 1.0]
+    to_reference: !<GroupTransform>
+      children:
+        - !<FileTransform> {src: sRGB_OETF_to_Linear.spi1d, interpolation: linear}
+        - !<ColorSpaceTransform> {src: Apple DCI-P3 D65, dst: Linear}
 
   - !<ColorSpace>
     name: sRGB_to_p3
@@ -75,7 +90,10 @@ colorspaces:
     isdata: false
     allocation: uniform
     allocationvars: [-0.125, 1.125]
-    from_reference: !<FileTransform> {src: srgb_to_p3d65.spimtx, interpolation: linear}
+    from_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: linear, dst: AppleP3 sRGB OETF}
+        - !<FileTransform> {src: sRGB_OETF_to_Linear.spi1d, interpolation: linear}
 
   - !<ColorSpace>
     name: sRGBf

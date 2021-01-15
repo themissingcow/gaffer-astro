@@ -1,5 +1,7 @@
 ##########################################################################
 #
+#  Copyright (c) 2011-2013, John Haddon. All rights reserved.
+#  Copyright (c) 2011-2013, Image Engine Design Inc. All rights reserved.
 #  Copyright (c) 2020, Tom Cowland. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -15,7 +17,7 @@
 #        disclaimer in the documentation and/or other materials provided with
 #        the distribution.
 #
-#      * Neither the name of Tom Cowland nor the names of
+#      * Neither the name of John Haddon nor the names of
 #        any other contributors to this software may be used to endorse or
 #        promote products derived from this software without specific prior
 #        written permission.
@@ -34,20 +36,46 @@
 #
 ##########################################################################
 
-from . import AssembleChannelsUI
-from . import ColoriseUI
-from . import ColoriseSHOUI
-from . import FITSReaderUI
-from . import LoadSHOUI
-from . import ScaleUI
-from . import StarnetUI
+import weakref
 
-from .ColorChooser import ColorChooser
-from .ColorSliderPlugValueWidget import *
-from .ColorSlidersPlugValueWidget import *
-from .ColorSwatchPlugValueWidget import ColorSwatchPlugValueWidget
-from .ExtendedColorPlugValueWidget import ExtendedColorPlugValueWidget
-from .RampPlugValueWidget import RampPlugValueWidget
+import Gaffer
+import GafferUI
+import GafferAstroUI
 
+from Qt import QtCore, QtWidgets
 
-__import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstroUI" )
+import imath
+
+class ColorSlidersPlugValueWidget( GafferUI.PlugValueWidget ) :
+
+	def __init__( self, plugs, **kw ) :
+
+		column = GafferUI.ListContainer( orientation = GafferUI.ListContainer.Orientation.Vertical, spacing = 4 )
+		GafferUI.PlugValueWidget.__init__( self, column, plugs, **kw )
+
+		self.__widgets = []
+
+		with column :
+			self.__tabs = GafferUI.TabbedContainer()
+
+		self.__tabs._qtWidget().setSizePolicy( QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum )
+
+		rgb = GafferAstroUI.RGBColorSliderPlugValueWidget( plugs )
+		self.__widgets.append( rgb )
+		self.__tabs.append( rgb, "RGB" )
+
+		HSL = GafferAstroUI.HSLColorSliderPlugValueWidget( plugs )
+		self.__widgets.append( HSL )
+		self.__tabs.append( HSL, "HSL" )
+
+		hsv = GafferAstroUI.HSVColorSliderPlugValueWidget( plugs )
+		self.__widgets.append( hsv )
+		self.__tabs.append( hsv, "HSV" )
+
+	def setPlugs( self, plugs ) :
+
+		for w in self.__widgets :
+			w.setPlugs( plugs )
+
+GafferUI.PlugValueWidget.registerType( Gaffer.Color3fPlug, ColorSlidersPlugValueWidget )
+GafferUI.PlugValueWidget.registerType( Gaffer.Color4fPlug, ColorSlidersPlugValueWidget )

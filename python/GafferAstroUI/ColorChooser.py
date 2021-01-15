@@ -214,6 +214,8 @@ class ColorChooser( GafferUI.Widget ) :
 
 				with GafferUI.ListContainer( GafferUI.ListContainer.Orientation.Horizontal, spacing = 4 ) :
 
+					label = GafferUI.Label( component.upper(), horizontalAlignment = GafferUI.Label.HorizontalAlignment.Center )
+					label._qtWidget().setFixedWidth( 20 )
 					numericWidget = GafferUI.NumericWidget( 0.0 )
 					numericWidget.setFixedCharacterWidth( 6 )
 					numericWidget.component = component

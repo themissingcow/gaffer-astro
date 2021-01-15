@@ -131,11 +131,11 @@ class ColorSliderPlugValueWidget( GafferUI.PlugValueWidget ) :
 
 class RGBColorSliderPlugValueWidget( ColorSliderPlugValueWidget ) :
 	def __init__( self, plugs, **kw ) :
-		ColorSliderPlugValueWidget.__init__( self, plugs, components = "rgba", **kw )
+		ColorSliderPlugValueWidget.__init__( self, plugs, components = "rgb-a", **kw )
 
 class HSVColorSliderPlugValueWidget( ColorSliderPlugValueWidget ) :
 	def __init__( self, plugs, **kw ) :
-		ColorSliderPlugValueWidget.__init__( self, plugs, components = "hsva", **kw )
+		ColorSliderPlugValueWidget.__init__( self, plugs, components = "hsv-a", **kw )
 
 
 for cls in ( ColorSliderPlugValueWidget, RGBColorSliderPlugValueWidget, HSVColorSliderPlugValueWidget ) :

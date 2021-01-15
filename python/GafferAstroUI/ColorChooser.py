@@ -190,7 +190,7 @@ class ColorChooser( GafferUI.Widget ) :
 
 	ColorChangedReason = IECore.Enum.create( "Invalid", "SetColor", "Reset" )
 
-	def __init__( self, color=imath.Color3f( 1 ), useDisplayTransform = True, components="rgbHSLa", showSwatch=True, **kw ) :
+	def __init__( self, color=imath.Color3f( 1 ), useDisplayTransform = True, components="rgb-HSL-a", showSwatch=True, **kw ) :
 
 		self.__column = GafferUI.ListContainer( GafferUI.ListContainer.Orientation.Vertical, spacing = 4 )
 
@@ -207,6 +207,11 @@ class ColorChooser( GafferUI.Widget ) :
 
 			# sliders and numeric widgets
 			for component in components :
+
+				if component == "-" :
+					GafferUI.Divider()
+					continue
+
 				with GafferUI.ListContainer( GafferUI.ListContainer.Orientation.Horizontal, spacing = 4 ) :
 
 					numericWidget = GafferUI.NumericWidget( 0.0 )

@@ -44,7 +44,7 @@ import GafferUI
 import GafferAstroUI
 
 
-__all__ = [ 'ColorSliderPlugValueWidget', 'RGBColorSliderPlugValueWidget', 'HSVColorSliderPlugValueWidget' ]
+__all__ = [ 'ColorSliderPlugValueWidget', 'RGBColorSliderPlugValueWidget', 'HSVColorSliderPlugValueWidget', 'HSLColorSliderPlugValueWidget' ]
 
 
 class ColorSliderPlugValueWidget( GafferUI.PlugValueWidget ) :
@@ -137,7 +137,10 @@ class HSVColorSliderPlugValueWidget( ColorSliderPlugValueWidget ) :
 	def __init__( self, plugs, **kw ) :
 		ColorSliderPlugValueWidget.__init__( self, plugs, components = "hsv-a", **kw )
 
+class HSLColorSliderPlugValueWidget( ColorSliderPlugValueWidget ) :
+	def __init__( self, plugs, **kw ) :
+		ColorSliderPlugValueWidget.__init__( self, plugs, components = "HSL-a", **kw )
 
-for cls in ( ColorSliderPlugValueWidget, RGBColorSliderPlugValueWidget, HSVColorSliderPlugValueWidget ) :
+for cls in ( ColorSliderPlugValueWidget, RGBColorSliderPlugValueWidget, HSVColorSliderPlugValueWidget, HSLColorSliderPlugValueWidget ) :
 	GafferUI.PlugValueWidget.registerType( Gaffer.Color3fPlug, cls )
 	GafferUI.PlugValueWidget.registerType( Gaffer.Color4fPlug, cls )

@@ -74,6 +74,10 @@ class ExtendedColorPlugValueWidget( GafferUI.PlugValueWidget ) :
 		self.__widgets.append( rgb )
 		self.__tabs.append( rgb, "RGB" )
 
+		HSL = GafferAstroUI.HSLColorSliderPlugValueWidget( plugs )
+		self.__widgets.append( HSL )
+		self.__tabs.append( HSL, "HSL" )
+
 		hsv = GafferAstroUI.HSVColorSliderPlugValueWidget( plugs )
 		self.__widgets.append( hsv )
 		self.__tabs.append( hsv, "HSV" )

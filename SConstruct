@@ -389,47 +389,16 @@ def checkInkscape(context):
 	context.Result(result)
 	return result
 
-def checkQtVersion( context ) :
-
-	context.Message( "Checking for Qt..." )
-
-	program = """
-	#include <iostream>
-	#include "QtCore/qconfig.h"
-
-	int main()
-	{
-#ifdef QT_VERSION_MAJOR
-		std::cout << QT_VERSION_MAJOR;
-#else
-		std::cout << 4;
-#endif
-		return 0;
-	}
-	"""
-
-	result = context.TryRun( program, ".cpp" )
-	if result[0] :
-		context.sconf.env["QT_VERSION"] = result[1]
-
-	context.Result( result[0] )
-	return result[0]
-
 conf = Configure(
 	env,
 	custom_tests = {
 		"checkInkscape" : checkInkscape,
-		"checkQtVersion" : checkQtVersion,
 	}
 )
 
 haveInkscape = conf.checkInkscape()
 if not haveInkscape and env["INKSCAPE"] != "disableGraphics" :
 	sys.stderr.write( "ERROR : Inkscape not found. Check INKSCAPE build variable.\n" )
-	Exit( 1 )
-
-if not conf.checkQtVersion() :
-	sys.stderr.write( "Qt not found\n" )
 	Exit( 1 )
 
 if env["ASAN"] :
@@ -607,22 +576,6 @@ for library in ( "GafferAstro", "GafferAstroUI" ) :
 		libraries[library]["envAppends"]["LIBS"].append( "GL" )
 	libraries[library]["envAppends"]["LIBS"].append( "GLEW$GLEW_LIB_SUFFIX" )
 
-# Add on Qt libraries to definitions - these vary from platform to platform
-
-def addQtLibrary( library, qtLibrary ) :
-
-	if env["PLATFORM"] == "darwin" :
-		libraries[library]["pythonEnvAppends"].setdefault( "FRAMEWORKS", [] ).append( "Qt" + qtLibrary )
-	else :
-		prefix = "Qt" if int( env["QT_VERSION"] ) < 5 else "Qt${QT_VERSION}"
-		libraries[library]["pythonEnvAppends"]["LIBS"].append( prefix + qtLibrary )
-
-for library in ( "GafferAstroUI", ) :
-	addQtLibrary( library, "Core" )
-	addQtLibrary( library, "Gui" )
-	addQtLibrary( library, "OpenGL" )
-	if int( env["QT_VERSION"] ) > 4 :
-		addQtLibrary( library, "Widgets" )
 
 ###############################################################################################
 # The stuff that actually builds the libraries and python modules

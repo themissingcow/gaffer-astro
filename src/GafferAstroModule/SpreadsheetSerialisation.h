@@ -15,7 +15,7 @@
 //        disclaimer in the documentation and/or other materials provided with
 //        the distribution.
 //
-//      * Neither the name of Tom Cowland nor the names of
+//      * Neither the name of John Haddon nor the names of
 //        any other contributors to this software may be used to endorse or
 //        promote products derived from this software without specific prior
 //        written permission.
@@ -34,18 +34,14 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include "boost/python.hpp"
+#ifndef GAFFERASTROMODULE_SPREADSHEETSERIALISATION_H
+#define GAFFERASTROMODULE_SPREADSHEETSERIALISATION_H
 
-#include "NodeBinding.h"
-#include "SpreadsheetSerialisation.h"
-
-using namespace boost::python;
-using namespace GafferAstroModule;
-
-BOOST_PYTHON_MODULE( _GafferAstro )
+namespace GafferAstroModule
 {
 
-	bindNodes();
-	overrideSpreadsheetSerialisation();
+void overrideSpreadsheetSerialisation();
 
-}
+} // namespace GafferAstroModule
+
+#endif // GAFFERASTROMODULE_SPREADSHEETSERIALISATION_H

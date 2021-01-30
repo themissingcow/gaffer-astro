@@ -134,6 +134,12 @@ options.Add(
 )
 
 options.Add(
+	"PYTHON_VERSION",
+	"The python version used to build Gaffer",
+	"2.7",
+)
+
+options.Add(
 	"LOCATE_DEPENDENCY_CPPPATH",
 	"Locations on which to search for include files "
 	"for the dependencies. These are included with -I.",
@@ -477,8 +483,6 @@ def runCommand( command ) :
 pythonVersion = subprocess.Popen( [ "python", "--version" ], env=commandEnv["ENV"], stderr=subprocess.PIPE ).stderr.read().decode().strip()
 pythonVersion = pythonVersion.split()[1].rpartition( "." )[0]
 
-env["PYTHON_VERSION"] = pythonVersion
-
 ###############################################################################################
 # The basic environment for building libraries
 ###############################################################################################
@@ -511,6 +515,19 @@ baseLibEnv.Append(
 
 basePythonEnv = baseLibEnv.Clone()
 
+#basePythonEnv["PYTHON_VERSION"] = subprocess.check_output(
+# [ "python", "-c", "import sys; print( '{}.{}'.format( *sys.version_info[:2] ) )" ],
+# env=commandEnv["ENV"]
+#).strip()
+
+basePythonEnv["PYTHON_ABI_VERSION"] = basePythonEnv["PYTHON_VERSION"]
+basePythonEnv["PYTHON_ABI_VERSION"] += subprocess.check_output(
+	[ "python", "-c", "import sysconfig; print( sysconfig.get_config_var( 'abiflags' ) or '' )" ],
+	env=commandEnv["ENV"]
+).strip()
+
+basePythonEnv["BOOST_PYTHON_LIB_SUFFIX"] = basePythonEnv["PYTHON_VERSION"].replace( ".", "" )
+
 basePythonEnv.Append(
 
 	CPPFLAGS = [
@@ -518,7 +535,7 @@ basePythonEnv.Append(
 	],
 
 	LIBS = [
-		"boost_python$BOOST_LIB_SUFFIX",
+		"boost_python$BOOST_PYTHON_LIB_SUFFIX$BOOST_LIB_SUFFIX",
 		"IECorePython$CORTEX_PYTHON_LIB_SUFFIX",
 		"Gaffer",
 	],
@@ -536,7 +553,7 @@ if basePythonEnv["PLATFORM"]=="darwin" :
 else :
 
 	basePythonEnv.Append(
-		CPPPATH = [ "$BUILD_DIR/include/python$PYTHON_VERSION" ]
+		CPPPATH = [ "$BUILD_DIR/include/python$PYTHON_ABI_VERSION" ]
 	)
 
 ###############################################################################################

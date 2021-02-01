@@ -45,6 +45,7 @@ enum TypeId
 	AssembleChannelsTypeId = 400101,
 	FITSReaderTypeId = 400102,
 	XISFReaderTypeId = 400103,
+	CollectChannelsTypeId = 400104,
 
 	LastTypeId = 400199
 };

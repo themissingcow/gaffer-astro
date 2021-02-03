@@ -78,9 +78,9 @@ class RowsPlugSerialiser : public ValuePlugSerialiser
 
 			for( const auto &cell : Spreadsheet::CellPlug::Range( *plug->getChild<Spreadsheet::RowPlug>( 0 )->cellsPlug() ) )
 			{
-				if( const auto skipColumnData = Gaffer::Metadata::value<IECore::BoolData>( cell.get(), "serialiser:spreadsheet:skipColumn" ) )
+				if( const auto staticColumnData = Gaffer::Metadata::value<IECore::BoolData>( cell.get(), "spreadsheet:staticColumn" ) )
 				{
-					if( skipColumnData->readable() )
+					if( staticColumnData->readable() )
 					{
 						continue;
 					}

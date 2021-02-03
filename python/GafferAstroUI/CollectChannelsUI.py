@@ -1,6 +1,6 @@
 ##########################################################################
 #
-#  Copyright (c) 2020, Tom Cowland. All rights reserved.
+#  Copyright (c) 2017, Image Engine Design Inc. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
 #        disclaimer in the documentation and/or other materials provided with
 #        the distribution.
 #
-#      * Neither the name of Tom Cowland nor the names of
+#      * Neither the name of John Haddon nor the names of
 #        any other contributors to this software may be used to endorse or
 #        promote products derived from this software without specific prior
 #        written permission.
@@ -34,9 +34,64 @@
 #
 ##########################################################################
 
-from .CollectChannelsTest import CollectChannelsTest
-from .SpreadsheetSerialisationTest import SpreadsheetSerialisationTest
+import Gaffer
+import GafferUI
+import GafferAstro
 
-if __name__ == "__main__":
-	import unittest
-	unittest.main()
+Gaffer.Metadata.registerNode(
+
+	GafferAstro.CollectChannels,
+
+	"description",
+	"""
+	Forms a series of image channels by repeatedly evaluating the input with different Contexts.
+	Useful for networks that need to dynamically build an unknown number of image channels.
+	""",
+
+	"ui:spreadsheet:activeRowNamesConnection", "channels",
+	"ui:spreadsheet:selectorContextVariablePlug", "channelVariable",
+
+	plugs = {
+
+		"in" : [
+
+			"description",
+			"""
+			The image which will be evaluated for each layer.
+			""",
+
+		],
+
+		"channels" : [
+
+			"description",
+			"""
+			A list of the new channels to create.
+			""",
+
+		],
+
+		"channelVariable" : [
+
+			"description",
+			"""
+			This Context Variable will be set with the current channel name when evaluating the in plug.
+			This allows you to vary the upstream processing for each new channel.
+			""",
+
+		],
+
+		"sourceChannel" : [
+
+			"description",
+			"""
+			The name of the channel from the in plug to use to populate each output channel. This is
+			evaluated in the same context as the in plug, allowing it to vary per output channel. If
+			empty, the first channel will be used.
+			""",
+
+		],
+
+	}
+
+)

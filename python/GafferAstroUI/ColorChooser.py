@@ -114,7 +114,7 @@ def hsl2rgb( color ) :
 	return out
 
 # A custom slider for drawing the backgrounds.
-class _ComponentSlider( GafferUI.NumericSlider ) :
+class _ComponentSlider( GafferUI.Slider ) :
 
 	def __init__( self, color, component, useDisplayTransform = True, **kw ) :
 
@@ -124,7 +124,7 @@ class _ComponentSlider( GafferUI.NumericSlider ) :
 		if component in ( "r", "g", "b", "v" ) :
 			hardMax = sys.float_info.max
 
-		GafferUI.NumericSlider.__init__( self, 0.0, min, max, hardMin, hardMax, **kw )
+		GafferUI.Slider.__init__( self, 0.0, min, max, hardMin, hardMax, **kw )
 
 		self._qtWidget().setFixedHeight( 20 )
 
@@ -278,7 +278,7 @@ class ColorChooser( GafferUI.Widget ) :
 	## A signal emitted whenever the color is changed. Slots should
 	# have the signature slot( ColorChooser, reason ). The reason
 	# argument may be passed either a ColorChooser.ColorChangedReason,
-	# a Slider.PositionChangedReason or a NumericWidget.ValueChangedReason
+	# a Slider.ValueChangedReason
 	# to describe the reason for the change.
 	def colorChangedSignal( self ) :
 
@@ -289,7 +289,7 @@ class ColorChooser( GafferUI.Widget ) :
 	@classmethod
 	def changesShouldBeMerged( cls, firstReason, secondReason ) :
 
-		if isinstance( firstReason, GafferUI.Slider.PositionChangedReason ) :
+		if isinstance( firstReason, GafferUI.Slider.ValueChangedReason ) :
 			return GafferUI.Slider.changesShouldBeMerged( firstReason, secondReason )
 		elif isinstance( firstReason, GafferUI.NumericWidget.ValueChangedReason ) :
 			return GafferUI.NumericWidget.changesShouldBeMerged( firstReason, secondReason )
@@ -325,8 +325,8 @@ class ColorChooser( GafferUI.Widget ) :
 	def __setColorInternal( self, color, reason ) :
 
 		dragBeginOrEnd = reason in (
-			GafferUI.NumericSlider.PositionChangedReason.DragBegin,
-			GafferUI.NumericSlider.PositionChangedReason.DragEnd,
+			GafferUI.Slider.ValueChangedReason.DragBegin,
+			GafferUI.Slider.ValueChangedReason.DragEnd,
 			GafferUI.NumericWidget.ValueChangedReason.DragBegin,
 			GafferUI.NumericWidget.ValueChangedReason.DragEnd,
 		)

@@ -39,6 +39,7 @@
 #include "GafferAstro/AssembleChannels.h"
 #include "GafferAstro/Colorise.h"
 #include "GafferAstro/FITSReader.h"
+#include "GafferAstro/XISFReader.h"
 
 #include "GafferBindings/DependencyNodeBinding.h"
 
@@ -53,4 +54,18 @@ void GafferAstroModule::bindNodes()
 	DependencyNodeClass<Colorise>();
 	DependencyNodeClass<FITSReader>();
 
+	{
+		scope s = GafferBindings::DependencyNodeClass<XISFReader>()
+			.def( "setOpenFilesLimit", &XISFReader::setOpenFilesLimit )
+			.staticmethod( "setOpenFilesLimit" )
+			.def( "getOpenFilesLimit", &XISFReader::getOpenFilesLimit )
+			.staticmethod( "getOpenFilesLimit" )
+		;
+
+		enum_<XISFReader::MissingFrameMode>( "MissingFrameMode" )
+			.value( "Error", XISFReader::Error )
+			.value( "Black", XISFReader::Black )
+			.value( "Hold", XISFReader::Hold )
+		;
+	}
 }

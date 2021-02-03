@@ -34,6 +34,8 @@
 #
 ##########################################################################
 
+from .SpreadsheetSerialisationTest import SpreadsheetSerialisationTest
+
 if __name__ == "__main__":
 	import unittest
 	unittest.main()

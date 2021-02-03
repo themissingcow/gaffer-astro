@@ -44,6 +44,7 @@ enum TypeId
 	ColoriseTypeId = 400100,
 	AssembleChannelsTypeId = 400101,
 	FITSReaderTypeId = 400102,
+	XISFReaderTypeId = 400103,
 
 	LastTypeId = 400199
 };

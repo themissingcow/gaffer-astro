@@ -38,6 +38,7 @@ from . import AssembleChannelsUI
 from . import ColoriseUI
 from . import ColoriseSHOUI
 from . import FITSReaderUI
+from . import XISFReaderUI
 from . import LoadSHOUI
 from . import ScaleUI
 from . import StarnetUI

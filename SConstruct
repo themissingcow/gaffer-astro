@@ -90,7 +90,7 @@ options.Add(
 options.Add(
 	"CXXSTD",
 	"The C++ standard to build against. A minimum of C++11 is required.",
-	"c++11",
+	"c++17",
 )
 
 options.Add(
@@ -131,6 +131,11 @@ options.Add(
 	"GAFFER_ROOT",
 	"The directory in which Gaffer is installed"
 	".../gaffer-build",
+)
+
+options.Add(
+	"PCL_ROOT",
+	"The directory in which the PixInsight PCL libraries and headers are installed"
 )
 
 options.Add(
@@ -265,6 +270,7 @@ env = Environment(
 	CPPPATH = [
 		"include",
 		"./thirdparty/build/include",
+		"$PCL_ROOT/include",
 		"$LOCATE_DEPENDENCY_CPPPATH",
 	],
 
@@ -277,6 +283,7 @@ env = Environment(
 	LIBPATH = [
 		"./lib",
 		"./thirdparty/build/lib",
+		"$PCL_ROOT/lib",
 		"$GAFFER_ROOT/lib",
 		"$LOCATE_DEPENDENCY_LIBPATH",
 	],
@@ -298,6 +305,11 @@ for path in [
 	env.Append(
 		CXXFLAGS = [ "-isystem", path ]
 	)
+
+# PCL defs/compiler warning supression
+env.Append(
+	CXXFLAGS = [ "-D__PCL_LINUX", "-Wno-dangling-else", "-Wno-parentheses", "-Wno-unused-function" ]
+)
 
 if "clang++" in os.path.basename( env["CXX"] ):
 	env.Append(
@@ -533,7 +545,7 @@ libraries = {
 
 	"GafferAstro" : {
 		"envAppends" : {
-			"LIBS" : [ "Gaffer", "GafferImage", "tbb", "libCCfits", "cfitsio" ],
+			"LIBS" : [ "Gaffer", "GafferImage", "tbb", "libCCfits", "cfitsio", "PCL-pxi", "lcms-pxi", "RFC6234-pxi" ],
 		},
 		"pythonEnvAppends" : {
 			"LIBS" : [ "GafferAstro", "GafferImage", "GafferBindings" ],

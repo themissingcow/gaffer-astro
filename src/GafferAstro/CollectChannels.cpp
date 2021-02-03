@@ -497,10 +497,10 @@ void CollectChannels::hashChannelData( const GafferImage::ImagePlug *parent, con
 	{
 		ImagePlug::GlobalScope c( context );
 
-		ConstStringVectorDataPtr srcChannelsData = inPlug()->channelNamesPlug()->getValue();
-
 		channelVariable = channelVariablePlug()->getValue();
 		c.set( channelVariable, channelName );
+
+		ConstStringVectorDataPtr srcChannelsData = inPlug()->channelNamesPlug()->getValue();
 
 		sourceChannelPlug()->hash( h );
 		srcChannel = sourceChannel( sourceChannelPlug()->getValue(), srcChannelsData->readable() );
@@ -546,10 +546,10 @@ IECore::ConstFloatVectorDataPtr CollectChannels::computeChannelData( const std::
 	{
 		ImagePlug::GlobalScope c( context );
 
-		ConstStringVectorDataPtr srcChannelsData = inPlug()->channelNamesPlug()->getValue();
-
 		channelVariable = channelVariablePlug()->getValue();
 		c.set( channelVariable, channelName );
+
+		ConstStringVectorDataPtr srcChannelsData = inPlug()->channelNamesPlug()->getValue();
 
 		srcChannel = sourceChannel( sourceChannelPlug()->getValue(), srcChannelsData->readable() );
 	}

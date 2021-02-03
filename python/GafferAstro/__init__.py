@@ -38,6 +38,7 @@ import GafferImage
 
 from ._GafferAstro import *
 
+from .MultiMonoImageReader import MultiMonoImageReader
 from .ColoriseSHO import ColoriseSHO
 from .LoadSHO import LoadSHO
 from .ParentPath import ParentPath

@@ -35,6 +35,7 @@
 ##########################################################################
 
 from . import AssembleChannelsUI
+from . import MultiMonoImageReaderUI
 from . import ColoriseUI
 from . import ColoriseSHOUI
 from . import FITSReaderUI

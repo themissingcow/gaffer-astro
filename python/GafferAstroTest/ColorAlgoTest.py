@@ -1,6 +1,7 @@
 ##########################################################################
 #
 #  Copyright (c) 2020, Tom Cowland. All rights reserved.
+#  Copyright (c) 2019, Image Engine Design Inc. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions are
@@ -15,7 +16,7 @@
 #        disclaimer in the documentation and/or other materials provided with
 #        the distribution.
 #
-#      * Neither the name of Tom Cowland nor the names of
+#      * Neither the name of John Haddon nor the names of
 #        any other contributors to this software may be used to endorse or
 #        promote products derived from this software without specific prior
 #        written permission.
@@ -34,23 +35,37 @@
 #
 ##########################################################################
 
-from . import AssembleChannelsUI
-from . import MultiMonoImageReaderUI
-from . import ColoriseUI
-from . import ColoriseSHOUI
-from . import FITSReaderUI
-from . import HueSaturationUI
-from . import XISFReaderUI
-from . import LoadSHOUI
-from . import ScaleUI
-from . import StarnetUI
+import unittest
 
-from .ColorChooser import ColorChooser
-from .ColorSliderPlugValueWidget import *
-from .ColorSlidersPlugValueWidget import *
-from .ColorSwatchPlugValueWidget import ColorSwatchPlugValueWidget
-from .ExtendedColorPlugValueWidget import ExtendedColorPlugValueWidget
-from .RampPlugValueWidget import RampPlugValueWidget
+import IECore
+
+import Gaffer
+import GafferTest
+
+import GafferAstro
+
+import imath
+
+class ColorAlgoTest( GafferTest.TestCase ) :
+
+	def testRgb2Hsl( self ) :
+
+		for c, e in (
+			( imath.Color3f( 1.0, 0.0, 0.0 ), imath.Color3f( 0.0, 1.0, 0.5 ) ),
+			( imath.Color3f( 0.0, 1.0, 0.0 ), imath.Color3f( 1.0/3.0, 1.0, 0.5 ) ),
+			( imath.Color3f( 0.0, 0.0, 1.0 ), imath.Color3f( 2.0/3.0, 1.0, 0.5 ) ),
+			( imath.Color3f( 0.0, 0.0, 0.0 ), imath.Color3f( 0.0, 0.0, 0.0 ) ),
+			( imath.Color3f( 1.0, 1.0, 1.0 ), imath.Color3f( 0.0, 0.0, 1.0 ) ),
+			( imath.Color4f( 1.0, 0.0, 0.0, 0.25 ), imath.Color4f( 0.0, 1.0, 0.5, 0.25 ) ),
+			( imath.Color4f( 0.0, 1.0, 0.0, 0.5  ), imath.Color4f( 1.0/3.0, 1.0, 0.5, 0.5 ) ),
+			( imath.Color4f( 0.0, 0.0, 1.0, 0.75 ), imath.Color4f( 2.0/3.0, 1.0, 0.5, 0.75 ) ),
+		) :
+			cc = type(c)( c )
+			GafferAstro.ColorAlgo.rgb2hsl( cc )
+			self.assertEqual( cc, e )
+			GafferAstro.ColorAlgo.hsl2rgb( cc )
+			self.assertEqual( cc, c )
 
 
-__import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstroUI" )
+if __name__ == "__main__":
+	unittest.main()

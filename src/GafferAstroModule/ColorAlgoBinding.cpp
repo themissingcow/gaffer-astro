@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2020, Tom Cowland. All rights reserved.
+//  Copyright (c) 2021, Tom Cowland. All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
 //  modification, are permitted provided that the following conditions are
@@ -37,17 +37,35 @@
 #include "boost/python.hpp"
 
 #include "ColorAlgoBinding.h"
-#include "NodeBinding.h"
-#include "SpreadsheetSerialisation.h"
+
+#include "GafferAstro/ColorAlgo.h"
+
+#include "OpenEXR/ImathColor.h"
 
 using namespace boost::python;
-using namespace GafferAstroModule;
+using namespace GafferAstro;
 
-BOOST_PYTHON_MODULE( _GafferAstro )
+void GafferAstroModule::bindColorAlgo()
 {
+	object module( borrowed( PyImport_AddModule( "GafferAstro.ColorAlgo" ) ) );
+	scope().attr( "ColorAlgo" ) = module;
+	scope moduleScope( module );
 
-	bindColorAlgo();
-	bindNodes();
-	overrideSpreadsheetSerialisation();
+	enum_<ColorAlgo::ColorModel>( "ColorModel" )
+		.value( "RGB", ColorAlgo::RGB )
+		.value( "HSV", ColorAlgo::HSV )
+		.value( "HSL", ColorAlgo::HSL )
+	;
 
+	def( "rgb2hsl", &ColorAlgo::rgb2hsl<Imath::Color3f> );
+	def( "rgb2hsl", &ColorAlgo::rgb2hsl<Imath::Color4f> );
+	def( "hsl2rgb", &ColorAlgo::hsl2rgb<Imath::Color3f> );
+	def( "hsl2rgb", &ColorAlgo::hsl2rgb<Imath::Color4f> );
+
+	def( "rgb2hsv", &ColorAlgo::rgb2hsv<Imath::Color3f> );
+	def( "rgb2hsv", &ColorAlgo::rgb2hsv<Imath::Color4f> );
+	def( "hsv2rgb", &ColorAlgo::hsv2rgb<Imath::Color3f> );
+	def( "hsv2rgb", &ColorAlgo::hsv2rgb<Imath::Color4f> );
+
+	def( "adjustHueSaturationRange", &ColorAlgo::adjustHueSaturationRange, ( arg( "adjust" ), arg( "center" ), arg( "range" ), arg( "transition" ), arg( "hsxColor" ), arg( "offsetMode" ) = false, arg( "outputMask" ) = false ) );
 }

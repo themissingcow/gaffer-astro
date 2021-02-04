@@ -35,6 +35,7 @@
 ##########################################################################
 
 from .CollectChannelsTest import CollectChannelsTest
+from .ColorAlgoTest import ColorAlgoTest
 from .SpreadsheetSerialisationTest import SpreadsheetSerialisationTest
 
 if __name__ == "__main__":

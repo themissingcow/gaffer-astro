@@ -40,6 +40,7 @@
 #include "GafferAstro/CollectChannels.h"
 #include "GafferAstro/Colorise.h"
 #include "GafferAstro/FITSReader.h"
+#include "GafferAstro/HueSaturation.h"
 #include "GafferAstro/XISFReader.h"
 
 #include "GafferBindings/DependencyNodeBinding.h"
@@ -55,6 +56,7 @@ void GafferAstroModule::bindNodes()
 	DependencyNodeClass<Colorise>();
 	DependencyNodeClass<FITSReader>();
 	DependencyNodeClass<CollectChannels>();
+	DependencyNodeClass<HueSaturation>();
 
 	{
 		scope s = GafferBindings::DependencyNodeClass<XISFReader>()

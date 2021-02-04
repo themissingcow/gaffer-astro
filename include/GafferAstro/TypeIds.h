@@ -46,6 +46,7 @@ enum TypeId
 	FITSReaderTypeId = 400102,
 	XISFReaderTypeId = 400103,
 	CollectChannelsTypeId = 400104,
+	HueSaturationTypeId = 400105,
 
 	LastTypeId = 400199
 };

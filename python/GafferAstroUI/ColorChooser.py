@@ -43,75 +43,10 @@ import sys
 import IECore
 
 import Gaffer
+import GafferAstro
 import GafferUI
 
 from Qt import QtGui
-
-def rgb2hsl( color ) :
-
-	r = color[0]
-	g = color[1]
-	b = color[2]
-
-	Xmax = max( r, max( g, b ) )
-	Xmin = min( r, min( g, b ) )
-
-	C = Xmax - Xmin
-
-	L = ( Xmax + Xmin ) / 2.0
-
-	if C == 0 :
-		H = 0
-	elif Xmax == r :
-		H = ( g - b ) / C
-	elif Xmax == g :
-		H = 2.0 + ( ( b - r ) / C )
-	else :
-		H = 4.0 + ( ( r - g ) / C )
-	H /= 6.0
-
-	if L <= 0.0 or L >= 1.0 :
-		S = 0
-	else :
-		S = ( Xmax - L ) / min( L, 1 - L )
-
-	out = type( color )( color )
-	out[0] = H
-	out[1] = S
-	out[2] = L
-	return out
-
-def hsl2rgb( color ) :
-
-	H = color[0]
-	S = color[1]
-	L = color[2]
-
-	H *= 6.0
-	C = ( 1.0 - abs( 2.0 * L - 1.0 ) ) * S
-	X = C * ( 1 - abs( ( H % 2.0 ) - 1.0 ) )
-
-	i = math.floor( H )
-	if i == 0 :
-		R, G, B = C, X, 0
-	elif i == 1 :
-		R, G, B = X, C, 0
-	elif i == 2 :
-		R, G, B = 0, C, X
-	elif i == 3 :
-		R, G, B = 0, X, C
-	elif i == 4 :
-		R, G, B = X, 0, C
-	else :
-		R, G, B = C, 0, X
-
-	m = L - ( C / 2.0 )
-
-	out = type( color )( color )
-	out[0] = R + m
-	out[1] = G + m
-	out[2] = B + m
-	return out
 
 # A custom slider for drawing the backgrounds.
 class _ComponentSlider( GafferUI.Slider ) :
@@ -158,11 +93,11 @@ class _ComponentSlider( GafferUI.Slider ) :
 			c1 = imath.Color3f( self.color[0], self.color[1], self.color[2] )
 			c2 = imath.Color3f( self.color[0], self.color[1], self.color[2] )
 			if self.component in "hsv" :
-				c1 = c1.rgb2hsv()
-				c2 = c2.rgb2hsv()
+				GafferAstro.ColorAlgo.rgb2hsv( c1 )
+				GafferAstro.ColorAlgo.rgb2hsv( c2 )
 			elif self.component in "HSL" :
-				c1 = rgb2hsl( c1 )
-				c2 = rgb2hsl( c2 )
+				GafferAstro.ColorAlgo.rgb2hsl( c1 )
+				GafferAstro.ColorAlgo.rgb2hsl( c2 )
 			a = { "r" : 0, "g" : 1, "b" : 2, "h" : 0, "s" : 1, "v": 2, "H" : 0, "S" : 1, "L" : 2 }[self.component]
 			c1[a] = 0
 			c2[a] = 1
@@ -173,9 +108,9 @@ class _ComponentSlider( GafferUI.Slider ) :
 			t = float( i ) / (numStops-1)
 			c = c1 + (c2-c1) * t
 			if self.component in "hsv" :
-				c = c.hsv2rgb()
+				GafferAstro.ColorAlgo.hsv2rgb( c )
 			elif self.component in "HSL" :
-				c = hsl2rgb( c )
+				GafferAstro.ColorAlgo.hsl2rgb( c )
 
 			grad.setColorAt( t, self._qtColor( displayTransform( c ) ) )
 
@@ -315,10 +250,10 @@ class ColorChooser( GafferUI.Widget ) :
 			a = { "r" : 0, "g" : 1, "b" : 2, "a" : 3 }[componentWidget.component]
 			newColor[a] = componentValue
 		else :
-			newColor = newColor.rgb2hsv() if componentWidget.component in "hsv" else rgb2hsl( newColor )
+			GafferAstro.ColorAlgo.rgb2hsv( newColor ) if componentWidget.component in "hsv" else GafferAstro.ColorAlgo.rgb2hsl( newColor )
 			a = { "h" : 0, "s" : 1, "v" : 2, "H" : 0, "S" : 1, "L" : 2 }[componentWidget.component]
 			newColor[a] = componentValue
-			newColor = newColor.hsv2rgb() if componentWidget.component in "hsv" else hsl2rgb( newColor )
+			GafferAstro.ColorAlgo.hsv2rgb( newColor ) if componentWidget.component in "hsv" else GafferAstro.ColorAlgo.hsl2rgb( newColor )
 
 		self.__setColorInternal( newColor, reason )
 
@@ -370,12 +305,14 @@ class ColorChooser( GafferUI.Widget ) :
 					self.__sliders["a"].parent().setVisible( False )
 					numSliders -= 1
 
-			cv = c.rgb2hsv()
+			cv = type( c )( c )
+			GafferAstro.ColorAlgo.rgb2hsv( cv )
 			for component, index in ( ( "h", 0 ), ( "s", 1 ), ( "v", 2 ) ) :
 				if component in self.__sliders :
 					self.__sliders[component].setValue( cv[index] )
 					self.__numericWidgets[component].setValue( cv[index] )
-			cl = rgb2hsl( c )
+			cl = type( c )( c )
+			GafferAstro.ColorAlgo.rgb2hsl( cl )
 			for component, index in ( ( "H", 0 ), ( "S", 1 ), ( "L", 2 ) ) :
 				if component in self.__sliders :
 					self.__sliders[component].setValue( cl[index] )

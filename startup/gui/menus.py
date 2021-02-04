@@ -45,6 +45,7 @@ import GafferUI
 nodeMenu = GafferUI.NodeMenu.acquire( application )
 
 nodeMenu.append( "/Image/Color/Colorise", GafferAstro.Colorise )
+nodeMenu.append( "/Image/Color/HueSaturation", GafferAstro.HueSaturation )
 nodeMenu.append( "/Image/Channels/AssembleChannels", GafferAstro.AssembleChannels )
 nodeMenu.append( "/Image/Channels/CollectChannels", GafferAstro.CollectChannels )
 nodeMenu.append( "/Image/File/MultiMonoImageReader", GafferAstro.MultiMonoImageReader )

@@ -39,6 +39,7 @@ from . import MultiMonoImageReaderUI
 from . import ColoriseUI
 from . import ColoriseSHOUI
 from . import FITSReaderUI
+from . import HueSaturationUI
 from . import XISFReaderUI
 from . import LoadSHOUI
 from . import ScaleUI

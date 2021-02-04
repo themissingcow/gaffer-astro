@@ -55,4 +55,8 @@ void GafferAstroModule::bindColorAlgo()
 	def( "rgb2hsl", &ColorAlgo::rgb2hsl<Imath::Color4f> );
 	def( "hsl2rgb", &ColorAlgo::hsl2rgb<Imath::Color3f> );
 	def( "hsl2rgb", &ColorAlgo::hsl2rgb<Imath::Color4f> );
+	def( "rgb2hsv", &ColorAlgo::rgb2hsv<Imath::Color3f> );
+	def( "rgb2hsv", &ColorAlgo::rgb2hsv<Imath::Color4f> );
+	def( "hsv2rgb", &ColorAlgo::hsv2rgb<Imath::Color3f> );
+	def( "hsv2rgb", &ColorAlgo::hsv2rgb<Imath::Color4f> );
 }

@@ -38,6 +38,8 @@
 
 #include "GafferAstro/ColorAlgo.h"
 
+#include "OpenEXR/ImathColorAlgo.h"
+
 #include <algorithm>
 #include <stdlib.h>
 
@@ -142,6 +144,18 @@ void ColorAlgo::hsl2rgb( T &color )
 	color[0] = r + m;
 	color[1] = g + m;
 	color[2] = b + m;
+}
+
+template<typename T>
+void ColorAlgo::rgb2hsv( T &color )
+{
+	color = Imath::rgb2hsv( color );
+}
+
+template<typename T>
+void ColorAlgo::hsv2rgb( T &color )
+{
+	color = Imath::hsv2rgb( color );
 }
 
 } // namespace GafferAstro

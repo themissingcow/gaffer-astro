@@ -48,6 +48,12 @@ void rgb2hsl( T &color );
 template<typename T>
 void hsl2rgb( T &color );
 
+template<typename T>
+void rgb2hsv( T &color );
+
+template<typename T>
+void hsv2rgb( T &color );
+
 } // namespace ColorAlgo
 
 } // namespace GafferAstro

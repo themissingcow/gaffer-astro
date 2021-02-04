@@ -36,23 +36,48 @@
 
 #pragma once
 
+#include "GafferAstro/Export.h"
+
+#include "OpenEXR/ImathColor.h"
+
 namespace GafferAstro
 {
 
 namespace ColorAlgo
 {
 
-template<typename T>
-void rgb2hsl( T &color );
+enum ColorModel
+{
+	RGB,
+	HSV,
+	HSL
+};
+
+// Conversions
 
 template<typename T>
-void hsl2rgb( T &color );
+GAFFERASTRO_API void rgb2hsl( T &color );
 
 template<typename T>
-void rgb2hsv( T &color );
+GAFFERASTRO_API void hsl2rgb( T &color );
 
 template<typename T>
-void hsv2rgb( T &color );
+GAFFERASTRO_API void rgb2hsv( T &color );
+
+template<typename T>
+GAFFERASTRO_API void hsv2rgb( T &color );
+
+// HSL Adjustments
+
+// Offsets the supplied color where it lies within range of the center color.
+// Colors outside of the range will be left unchanged.
+// The hue component is wrapped, saturation is clamped between 0-1 and v/l is positive.
+GAFFERASTRO_API void adjustHueSaturationRange(
+	const Imath::V3f &adjust,
+	const Imath::Color3f &center, const Imath::V3f &range, const Imath::V3f &transition,
+	Imath::Color3f &color,
+	bool offsetMode = false, bool outputMask = false
+);
 
 } // namespace ColorAlgo
 

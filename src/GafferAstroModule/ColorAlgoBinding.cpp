@@ -51,12 +51,21 @@ void GafferAstroModule::bindColorAlgo()
 	scope().attr( "ColorAlgo" ) = module;
 	scope moduleScope( module );
 
+	enum_<ColorAlgo::ColorModel>( "ColorModel" )
+		.value( "RGB", ColorAlgo::RGB )
+		.value( "HSV", ColorAlgo::HSV )
+		.value( "HSL", ColorAlgo::HSL )
+	;
+
 	def( "rgb2hsl", &ColorAlgo::rgb2hsl<Imath::Color3f> );
 	def( "rgb2hsl", &ColorAlgo::rgb2hsl<Imath::Color4f> );
 	def( "hsl2rgb", &ColorAlgo::hsl2rgb<Imath::Color3f> );
 	def( "hsl2rgb", &ColorAlgo::hsl2rgb<Imath::Color4f> );
+
 	def( "rgb2hsv", &ColorAlgo::rgb2hsv<Imath::Color3f> );
 	def( "rgb2hsv", &ColorAlgo::rgb2hsv<Imath::Color4f> );
 	def( "hsv2rgb", &ColorAlgo::hsv2rgb<Imath::Color3f> );
 	def( "hsv2rgb", &ColorAlgo::hsv2rgb<Imath::Color4f> );
+
+	def( "adjustHueSaturationRange", &ColorAlgo::adjustHueSaturationRange, ( arg( "adjust" ), arg( "center" ), arg( "range" ), arg( "transition" ), arg( "hsxColor" ), arg( "offsetMode" ) = false, arg( "outputMask" ) = false ) );
 }

@@ -75,7 +75,7 @@ class MultiMonoImageReader( GafferImage.ImageNode ) :
 		self["__SwitchExpression"] = switchExpression
 		switchExpression.setExpression(
 			inspect.cleandoc( """
-				map = { "fits" : 0, "xsif" : 1 }
+				map = { "fits" : 0, "xisf" : 1 }
 				parent["__ReaderSwitch"]["index"] = map.get( context[ "extension" ], 2 )
 			""" ),
 			"python"

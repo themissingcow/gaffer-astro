@@ -1,6 +1,6 @@
 ##########################################################################
 #
-#  Copyright (c) 2020, Tom Cowland. All rights reserved.
+#  Copyright (c) 2021, Tom Cowland. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions are
@@ -34,20 +34,46 @@
 #
 ##########################################################################
 
-import GafferImage
+import glob
+import os
+import re
 
-from ._GafferAstro import *
+tokenRegex = r"\$\{([^}]+)\}"
 
-from .MultiMonoImageReader import MultiMonoImageReader
-from .ColoriseSHO import ColoriseSHO
-from .LoadSHO import LoadSHO
-from .ParentPath import ParentPath
-from .Scale import Scale
-from .Starnet import Starnet
-from .Trim import Trim
+def splitPathTemplate( template ) :
 
-from . import FileAlgo
+	firstTokenIndex = template.find( "$" )
+	if firstTokenIndex == -1 :
+		return ( template, "" )
 
-NarrowbandChannels = ( "Sii", "Ha", "Oiii" )
+	precedingDirIndex = template.rfind( "/", 0, firstTokenIndex )
+	if precedingDirIndex == -1 :
+		return ( "", template )
 
-__import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstro" )
+	return( template[ : precedingDirIndex ], template[ precedingDirIndex + 1 : ] )
+
+def pathsMatchingTemplate( template, paths ) :
+
+	tokens = re.findall( tokenRegex, template )
+	template = re.escape( template )
+	# Our token syntax ${} will now be \$\{...\}
+	pathExpr = "^%s$" % re.sub( r"\\\$\\\{([^}]+)\\\}", "([^/]+?)", template )
+
+	matches = []
+
+	for p in paths :
+		match = re.match( pathExpr, p )
+		if match :
+			matches.append( (
+				p,
+				{ t : match.group( i + 1 ) for i, t in enumerate( tokens ) }
+			) )
+
+	return matches
+
+def filesMatchingTemplate( template ) :
+
+	template = os.path.expanduser( template )
+	paths = glob.glob( re.sub( tokenRegex, "*", template ) )
+	return pathsMatchingTemplate( template, paths )
+

@@ -1,6 +1,6 @@
 ##########################################################################
 #
-#  Copyright (c) 2020, Tom Cowland. All rights reserved.
+#  Copyright (c) 2021 Tom Cowland. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions are
@@ -34,24 +34,64 @@
 #
 ##########################################################################
 
-from . import AssembleChannelsUI
-from . import MultiGradeUI
-from . import MultiMonoImageReaderUI
-from . import ColoriseUI
-from . import ColoriseSHOUI
-from . import FITSReaderUI
-from . import HueSaturationUI
-from . import XISFReaderUI
-from . import LoadSHOUI
-from . import ScaleUI
-from . import StarnetUI
+import Gaffer
+import GafferUI
+import GafferAstro
 
-from .ColorChooser import ColorChooser
-from .ColorSliderPlugValueWidget import *
-from .ColorSlidersPlugValueWidget import *
-from .ColorSwatchPlugValueWidget import ColorSwatchPlugValueWidget
-from .ExtendedColorPlugValueWidget import ExtendedColorPlugValueWidget
-from .RampPlugValueWidget import RampPlugValueWidget
+import IECore
+
+import functools
+import weakref
 
 
-__import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstroUI" )
+def __addRow( weakNode, channel = None ) :
+
+	if weakNode() is None :
+		return
+
+	rowsPlug = weakNode()["rows"]
+
+	with Gaffer.UndoScope( rowsPlug.ancestor( Gaffer.ScriptNode ) ) :
+
+		row = rowsPlug.addRow()
+
+		if channel :
+			row["name"].setValue( channel )
+
+def __existingRows( rowsPlug ) :
+
+	rows = []
+
+	for r in rowsPlug.children() :
+		if not r.isSame( rowsPlug.defaultRow() ) :
+			rows.append( r["name"].getValue() )
+
+	return rows
+
+def __addRowButtonMenuDefinition( menuDefinition, widget ) :
+
+	node = widget.getPlug().node()
+
+	if not isinstance( node, GafferAstro.MultiGrade ) :
+		return
+
+	weakNode = weakref.ref( node )
+
+	menuDefinition.append( "/Empty", { "command" : functools.partial( __addRow, weakNode ) } )
+
+	with widget.ancestor( GafferUI.NodeEditor ).getContext() :
+		existingRows = __existingRows( node["rows"] )
+		channels = node["in"].channelNames()
+
+	if not channels :
+		return
+
+	menuDefinition.append( "/EmptyDivider", { "divider" : True, "label" : "Channels" } )
+
+	for c in channels :
+		menuDefinition.append( "/%s" % c.replace( ".", "/" ) , {
+			"command" : functools.partial( __addRow, weakNode, c ),
+			"active" : c not in existingRows
+		} )
+
+GafferUI.SpreadsheetUI.addRowButtonMenuSignal().connect( __addRowButtonMenuDefinition, scoped = False )

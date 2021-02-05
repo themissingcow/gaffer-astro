@@ -34,13 +34,16 @@
 #
 ##########################################################################
 
-import IECore
-
 import Gaffer
 import GafferUI
 import GafferAstro
 
+import IECore
+
 import imath
+
+import functools
+
 
 Gaffer.Metadata.registerNode(
 
@@ -91,7 +94,7 @@ class _AddFooter( GafferUI.Widget ) :
 		with row :
 
 			self.__addButton = GafferUI.Button( text = "Add Channel" )
-			self.__addButton.clickedSignal().connect( Gaffer.WeakMethod( self.__add ), scoped = False )
+			self.__addButton.clickedSignal().connect( Gaffer.WeakMethod( self.__addButtonClicked ), scoped = False )
 
 			GafferUI.Spacer( imath.V2i( 1 ), imath.V2i( 999999, 1 ), parenting = { "expand" : True } )
 
@@ -106,9 +109,82 @@ class _AddFooter( GafferUI.Widget ) :
 		if plug.isSame( self.__node["rows"] ) and Gaffer.MetadataAlgo.readOnlyAffectedByChange( plug, plug, key ) :
 			self.__addButton.setEnabled( not Gaffer.MetadataAlgo.readOnly( plug ) )
 
-	def __add( self, _ ) :
+	def __addButtonClicked( self, _ ) :
+
+		menuDefinition = IECore.MenuDefinition()
+
+		with self.ancestor( GafferUI.NodeEditor ).getContext() :
+			template = self.__node["fileName"].getValue()
+			defaultExtension = self.__node["rows"].defaultRow()["cells"]["extension"]["value"].getValue()
+
+		if template :
+
+			baseDir, _ = GafferAstro.FileAlgo.splitPathTemplate( template )
+			matches = GafferAstro.FileAlgo.filesMatchingTemplate( template )
+
+			if matches :
+
+				menuDefinition.append( "/Empty", {
+					"command" : Gaffer.WeakMethod( self.__addRow )
+				} )
+
+				menuDefinition.append( "/EmptyDivider", { "divider" : True, "label" : "File Matches" } )
+
+				existingRows = self.__existingRows()
+				for m in matches :
+					token = m[1].get( "token", None )
+					extension = m[1].get( "extension", None )
+					menuDefinition.append( "/%s" % ( m[0][len(baseDir):] ), {
+						"command" : functools.partial(
+							Gaffer.WeakMethod( self.__addRow ),
+							token,
+							token,
+							extension if extension != defaultExtension else None
+						),
+						"active" : ( token, extension ) not in existingRows
+					} )
+
+		if menuDefinition.size() :
+			self.__popup = GafferUI.Menu( menuDefinition )
+			self.__popup.popup( parent = self )
+		else :
+			self.__addRow()
+
+	def __existingRows( self ) :
+
+		rows = []
+
+		with self.ancestor( GafferUI.NodeEditor ).getContext() :
+
+			defaultRow = self.__node["rows"].defaultRow()
+			defaultToken = defaultRow["cells"]["filenameToken"]["value"].getValue()
+			defaultExtension = defaultRow["cells"]["extension"]["value"].getValue()
+
+			for r in self.__node["rows"].children() :
+				if r.isSame( defaultRow ) :
+						continue
+				token = r["cells"]["filenameToken"]["value"].getValue() if r["cells"]["filenameToken"].enabledPlug().getValue() else defaultToken
+				token = token or c["name"]
+				extension = r["cells"]["extension"]["value"].getValue() if r["cells"]["extension"].enabledPlug().getValue() else defaultExtension
+				rows.append( ( token, extension ) )
+
+		return rows
+
+	def __addRow( self, name = None, filenameToken = None, extension = None ) :
 
 		with Gaffer.UndoScope( self.__node.ancestor( Gaffer.ScriptNode ) ) :
+
 			row = self.__node["rows"].addRow()
-			row["cells"]["filenameToken"].enabledPlug().setValue( False )
-			row["cells"]["type"].enabledPlug().setValue( False )
+
+			if name :
+				row["name"].setValue( name )
+
+			if filenameToken :
+				row["cells"]["filenameToken"]["value"].setValue( filenameToken )
+			else :
+				row["cells"]["filenameToken"].enabledPlug().setValue( False )
+
+			if extension :
+				row["cells"]["extension"]["value"].setValue( extension )
+			else :
+				row["cells"]["extension"].enabledPlug().setValue( False )

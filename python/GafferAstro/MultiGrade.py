@@ -1,6 +1,6 @@
 ##########################################################################
 #
-#  Copyright (c) 2020, Tom Cowland. All rights reserved.
+#  Copyright (c) 2021, Tom Cowland. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions are
@@ -34,39 +34,45 @@
 #
 ##########################################################################
 
+import Gaffer
 import GafferImage
-import GafferAstro
-import GafferAstroUI
+import IECore
 
-import GafferUI
+import inspect
 
-# Nodes
+class MultiGrade( GafferImage.ImageProcessor ) :
 
-nodeMenu = GafferUI.NodeMenu.acquire( application )
+	def __init__( self, name = "MultiGrade" ) :
 
-nodeMenu.append( "/Image/Color/Colorise", GafferAstro.Colorise )
-nodeMenu.append( "/Image/Color/HueSaturation", GafferAstro.HueSaturation )
-nodeMenu.append( "/Image/Color/MultiGrade", GafferAstro.MultiGrade )
-nodeMenu.append( "/Image/Channels/AssembleChannels", GafferAstro.AssembleChannels )
-nodeMenu.append( "/Image/Channels/CollectChannels", GafferAstro.CollectChannels )
-nodeMenu.append( "/Image/File/MultiMonoImageReader", GafferAstro.MultiMonoImageReader )
-nodeMenu.append( "/Image/File/FITSReader", GafferAstro.FITSReader )
-nodeMenu.append( "/Image/File/XISFReader", GafferAstro.XISFReader )
-nodeMenu.append( "/Image/Transform/Scale", GafferAstro.Scale )
-nodeMenu.append( "/Image/Transform/Trim", GafferAstro.Trim )
+		GafferImage.ImageProcessor.__init__( self, name )
 
-nodeMenu.append( "/Astro/ColoriseSHO", GafferAstro.ColoriseSHO )
-nodeMenu.append( "/Astro/LoadSHO", GafferAstro.LoadSHO )
-nodeMenu.append( "/Astro/Starnet", GafferAstro.Starnet )
+		grade = GafferImage.Grade()
+		self["__Grade"] = grade
+		grade["in"].setInput( self["in"] )
+		self["out"].setInput( grade["out"] )
 
-# Menu Bar
+		spreadsheet = Gaffer.Spreadsheet()
+		self["__Spreadsheet"] = spreadsheet
+		spreadsheet["selector"].setValue( "${image:channelName}" )
 
-scriptWindowMenu = GafferUI.ScriptWindow.menuDefinition( application )
+		for p in ( "blackPoint", "whitePoint", "gamma" ) :
+			grade[ p ].gang()
+			spreadsheet["rows"].addColumn( grade[ p ]["r"], p )
+			Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"][ p ], "spreadsheet:staticColumn", True, persistent = False )
+			grade[ p ]["r"].setInput( spreadsheet["out"][ p ] )
 
-def clearImageCaches( menu ) :
-	scope = GafferUI.EditMenu.scope( menu )
-	for cls in ( GafferImage.ImageReader, GafferAstro.FITSReader ) :
-		for node in cls.RecursiveRange( scope.script ) :
-			node['refreshCount'].setValue( node['refreshCount'].getValue() + 1 )
+		channelsExpression = Gaffer.Expression()
+		self["__ChannelsExpression"] = channelsExpression
+		channelsExpression.setExpression(
+			inspect.cleandoc(
+				"""
+				rowNames = parent["__Spreadsheet"]["activeRowNames"]
+				parent["__Grade"]["channels"] = " ".join( rowNames )
+				"""
+			),
+			"python"
+		)
 
-scriptWindowMenu.append( "/Tools/Astro/FlushImageCache", { "command" : clearImageCaches } )
+		Gaffer.PlugAlgo.promote( spreadsheet["rows"] )
+
+IECore.registerRunTimeTyped( MultiGrade, typeName = "GafferAstro::MultiGrade" )

@@ -38,9 +38,10 @@ import GafferImage
 
 from ._GafferAstro import *
 
-from .MultiMonoImageReader import MultiMonoImageReader
 from .ColoriseSHO import ColoriseSHO
 from .LoadSHO import LoadSHO
+from .MultiMonoImageReader import MultiMonoImageReader
+from .MultiGrade import MultiGrade
 from .ParentPath import ParentPath
 from .Scale import Scale
 from .Starnet import Starnet

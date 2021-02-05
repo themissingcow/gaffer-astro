@@ -43,6 +43,7 @@ import IECore
 import imath
 
 import functools
+import weakref
 
 
 Gaffer.Metadata.registerNode(
@@ -52,10 +53,6 @@ Gaffer.Metadata.registerNode(
 	"description",
 	"""
 	""",
-
-	"layout:customWidget:addChannelButton:widgetType", "GafferAstroUI.MultiMonoImageReaderUI._AddFooter",
-	"layout:customWidget:addChannelButton:section", "Settings",
-	"layout:customWidget:addChannelButton:index", 99,
 
 	plugs = {
 
@@ -84,107 +81,89 @@ Gaffer.Metadata.registerNode(
 
 )
 
-class _AddFooter( GafferUI.Widget ) :
 
-	def __init__( self, node, **kw ) :
+def __addRow( weakNode, name = None, filenameToken = None, extension = None ) :
 
-		row = GafferUI.ListContainer( GafferUI.ListContainer.Orientation.Horizontal )
-		GafferUI.Widget.__init__( self, row )
+	if weakNode() is None :
+		return
 
-		with row :
+	rowsPlug = weakNode()["rows"]
 
-			self.__addButton = GafferUI.Button( text = "Add Channel" )
-			self.__addButton.clickedSignal().connect( Gaffer.WeakMethod( self.__addButtonClicked ), scoped = False )
+	with Gaffer.UndoScope( rowsPlug.ancestor( Gaffer.ScriptNode ) ) :
 
-			GafferUI.Spacer( imath.V2i( 1 ), imath.V2i( 999999, 1 ), parenting = { "expand" : True } )
+		row = rowsPlug.addRow()
 
-		self.__node = node
+		if name :
+			row["name"].setValue( name )
 
-		Gaffer.Metadata.plugValueChangedSignal( node ).connect(
-			Gaffer.WeakMethod( self.__plugMetadataChanged ), scoped = False
-		)
-
-	def __plugMetadataChanged( self, plug, key, reason ) :
-
-		if plug.isSame( self.__node["rows"] ) and Gaffer.MetadataAlgo.readOnlyAffectedByChange( plug, plug, key ) :
-			self.__addButton.setEnabled( not Gaffer.MetadataAlgo.readOnly( plug ) )
-
-	def __addButtonClicked( self, _ ) :
-
-		menuDefinition = IECore.MenuDefinition()
-
-		with self.ancestor( GafferUI.NodeEditor ).getContext() :
-			template = self.__node["fileName"].getValue()
-			defaultExtension = self.__node["rows"].defaultRow()["cells"]["extension"]["value"].getValue()
-
-		if template :
-
-			baseDir, _ = GafferAstro.FileAlgo.splitPathTemplate( template )
-			matches = GafferAstro.FileAlgo.filesMatchingTemplate( template )
-
-			if matches :
-
-				menuDefinition.append( "/Empty", {
-					"command" : Gaffer.WeakMethod( self.__addRow )
-				} )
-
-				menuDefinition.append( "/EmptyDivider", { "divider" : True, "label" : "File Matches" } )
-
-				existingRows = self.__existingRows()
-				for m in matches :
-					token = m[1].get( "token", None )
-					extension = m[1].get( "extension", None )
-					menuDefinition.append( "/%s" % ( m[0][len(baseDir):] ), {
-						"command" : functools.partial(
-							Gaffer.WeakMethod( self.__addRow ),
-							token,
-							token,
-							extension if extension != defaultExtension else None
-						),
-						"active" : ( token, extension ) not in existingRows
-					} )
-
-		if menuDefinition.size() :
-			self.__popup = GafferUI.Menu( menuDefinition )
-			self.__popup.popup( parent = self )
+		if filenameToken :
+			row["cells"]["filenameToken"]["value"].setValue( filenameToken )
 		else :
-			self.__addRow()
+			row["cells"]["filenameToken"].enabledPlug().setValue( False )
 
-	def __existingRows( self ) :
+		if extension :
+			row["cells"]["extension"]["value"].setValue( extension )
+		else :
+			row["cells"]["extension"].enabledPlug().setValue( False )
 
-		rows = []
 
-		with self.ancestor( GafferUI.NodeEditor ).getContext() :
+def __existingRows( rowsPlug ) :
 
-			defaultRow = self.__node["rows"].defaultRow()
-			defaultToken = defaultRow["cells"]["filenameToken"]["value"].getValue()
-			defaultExtension = defaultRow["cells"]["extension"]["value"].getValue()
+	rows = []
 
-			for r in self.__node["rows"].children() :
-				if r.isSame( defaultRow ) :
-						continue
-				token = r["cells"]["filenameToken"]["value"].getValue() if r["cells"]["filenameToken"].enabledPlug().getValue() else defaultToken
-				token = token or c["name"]
-				extension = r["cells"]["extension"]["value"].getValue() if r["cells"]["extension"].enabledPlug().getValue() else defaultExtension
-				rows.append( ( token, extension ) )
+	defaultToken = rowsPlug.defaultRow()["cells"]["filenameToken"]["value"].getValue()
+	defaultExtension = rowsPlug.defaultRow()["cells"]["extension"]["value"].getValue()
 
-		return rows
+	for r in rowsPlug.children() :
 
-	def __addRow( self, name = None, filenameToken = None, extension = None ) :
+		if r.isSame( rowsPlug.defaultRow() ) :
+				continue
 
-		with Gaffer.UndoScope( self.__node.ancestor( Gaffer.ScriptNode ) ) :
+		token = r["cells"]["filenameToken"]["value"].getValue() if r["cells"]["filenameToken"].enabledPlug().getValue() else defaultToken
+		token = token or r["name"]
+		extension = r["cells"]["extension"]["value"].getValue() if r["cells"]["extension"].enabledPlug().getValue() else defaultExtension
+		rows.append( ( token, extension ) )
 
-			row = self.__node["rows"].addRow()
+	return rows
 
-			if name :
-				row["name"].setValue( name )
+def __addRowButtonMenuDefinition( menuDefinition, widget ) :
 
-			if filenameToken :
-				row["cells"]["filenameToken"]["value"].setValue( filenameToken )
-			else :
-				row["cells"]["filenameToken"].enabledPlug().setValue( False )
+	node = widget.getPlug().node()
 
-			if extension :
-				row["cells"]["extension"]["value"].setValue( extension )
-			else :
-				row["cells"]["extension"].enabledPlug().setValue( False )
+	if not isinstance( node, GafferAstro.MultiMonoImageReader ) :
+		return
+
+	weakNode = weakref.ref( node )
+
+	menuDefinition.append( "/Empty", { "command" : functools.partial( __addRow, weakNode ) } )
+
+	with widget.ancestor( GafferUI.NodeEditor ).getContext() :
+		template = node["fileName"].getValue()
+		defaultExtension = node["rows"].defaultRow()["cells"]["extension"]["value"].getValue()
+		existingRows = __existingRows( node["rows"] )
+
+	if not template :
+		return
+
+	baseDir, _ = GafferAstro.FileAlgo.splitPathTemplate( template )
+	matches = GafferAstro.FileAlgo.filesMatchingTemplate( template )
+
+	if not matches :
+		return
+
+	menuDefinition.append( "/EmptyDivider", { "divider" : True, "label" : "File Matches" } )
+
+	for m in matches :
+		token = m[1].get( "token", None )
+		extension = m[1].get( "extension", None )
+		menuDefinition.append( "/%s" % ( m[0][len(baseDir):] ), {
+			"command" : functools.partial(
+				__addRow, weakNode,
+				token,
+				token,
+				extension if extension != defaultExtension else None
+			),
+			"active" : ( token, extension ) not in existingRows
+		} )
+
+GafferUI.SpreadsheetUI.addRowButtonMenuSignal().connect( __addRowButtonMenuDefinition, scoped = False )

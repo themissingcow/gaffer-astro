@@ -3,6 +3,7 @@ import IECore
 import Gaffer
 import GafferAstro
 
+
 Gaffer.Metadata.registerNode(
 
 	GafferAstro.HueSaturation,
@@ -33,6 +34,11 @@ Gaffer.Metadata.registerNode(
 			'preset:HSL', "hsl",
 			'preset:HSV', "hsv",
 			'layout:section', 'Advanced',
+		],
+
+		"center" : [
+			"extendedColorPlugValueWidget:currentTab", 'HSL',
+			"extendedColorPlugValueWidget:tabsVisible", True
 		],
 
 		"offsetMode" : [

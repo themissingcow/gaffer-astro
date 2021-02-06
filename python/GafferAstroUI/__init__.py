@@ -45,6 +45,7 @@ from . import XISFReaderUI
 from . import LoadSHOUI
 from . import ScaleUI
 from . import StarnetUI
+from . import MultiStarnetUI
 
 from .ColorChooser import ColorChooser
 from .ColorSliderPlugValueWidget import *

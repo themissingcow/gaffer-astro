@@ -42,6 +42,7 @@ from .ColoriseSHO import ColoriseSHO
 from .LoadSHO import LoadSHO
 from .MultiMonoImageReader import MultiMonoImageReader
 from .MultiGrade import MultiGrade
+from .MultiStarnet import MultiStarnet
 from .ParentPath import ParentPath
 from .Scale import Scale
 from .Starnet import Starnet

@@ -112,6 +112,7 @@ class ColoriseSHO( GafferImage.ImageProcessor ) :
 			colorise["channel"].setInput( self["source%s" % channel] )
 			colorise["mapEnabled"].setValue( True )
 			colorise["range"].setInput( self["range%s" % channel ] )
+			colorise["enabled"].setInput( colorise["channel"] )
 			# Work around issue where setInput doesn't sync the number of knots
 			colorise["map"].setValue( self["map%s" % channel ].getValue() )
 			colorise["map"].setInput( self["map%s" % channel ] )

@@ -42,6 +42,8 @@ import Gaffer
 import GafferUI
 import GafferAstroUI
 
+from GafferUI.PlugValueWidget import sole
+
 from Qt import QtCore, QtWidgets
 
 import imath
@@ -49,6 +51,9 @@ import imath
 _originalColorWidget = GafferUI.ColorPlugValueWidget
 
 class ExtendedColorPlugValueWidget( GafferUI.PlugValueWidget ) :
+
+	tabsVisibleMetadataKey = "extendedColorPlugValueWidget:tabsVisible"
+	currentTabMetadataKey = "extendedColorPlugValueWidget:currentTab"
 
 	def __init__( self, plugs, **kw ) :
 
@@ -82,20 +87,81 @@ class ExtendedColorPlugValueWidget( GafferUI.PlugValueWidget ) :
 		self.__widgets.append( hsv )
 		self.__tabs.append( hsv, "HSV" )
 
-		self.__tabs.setVisible( False )
+		self.__currentTabChangedConnection = self.__tabs.currentChangedSignal().connect(
+			Gaffer.WeakMethod( self.__currentTabChanged ), scoped = False
+		)
+
+		self.__syncUI()
+		self.__updatePlugConnections()
 
 	def setPlugs( self, plugs ) :
 
 		for w in self.__widgets :
 			w.setPlugs( plugs )
 
-	def _updateFromPlugs( self ) :
-		pass
+		self.__syncUI()
+		self.__updatePlugConnections()
+
+	def __updatePlugConnections( self ) :
+
+		self.__metadataChangedConnections = [
+			Gaffer.Metadata.plugValueChangedSignal( p.node() ).connect( Gaffer.WeakMethod( self.__plugMetadataChanged ) )
+			for p in self.getPlugs()
+		]
+
+	def __plugMetadataChanged( self, plug, key, reason ) :
+
+		for p in self.getPlugs() :
+			if p == plug and key in ( self.currentTabMetadataKey, self.tabsVisibleMetadataKey ) :
+				self.__syncUI()
+				return
+
+	def __currentTabChanged( self, *unused ) :
+
+		current = self.__tabs.getLabel( self.__tabs.getCurrent() )
+		for p in self.getPlugs() :
+			Gaffer.Metadata.registerValue( p, self.currentTabMetadataKey, current )
 
 	def __toggleSliders( self, *unused ) :
 
-		self.__tabs.setVisible( not self.__tabs.getVisible() )
+		self.__setTabsVisible( not self.__getTabsVisible() )
 
+	def __setTabsVisible( self, visible, persist = True ) :
+
+		self.__tabs.setVisible( visible )
+		if not persist :
+			return
+
+		with Gaffer.BlockedConnection( self.__metadataChangedConnections ) :
+			for p in self.getPlugs() :
+				Gaffer.Metadata.registerValue( p, self.tabsVisibleMetadataKey, visible )
+
+	def __getTabsVisible( self ) :
+
+		return self.__tabs.getVisible()
+
+	def __switchToTab( self, tabLabel ) :
+
+		for tab in self.__tabs :
+			if self.__tabs.getLabel( tab ) == tabLabel :
+				self.__tabs.setCurrent( tab )
+				return
+
+		raise ValueError( "Unknown tab '%s'" % tabLabel )
+
+	def __syncUI( self ) :
+
+		plugs = self.getPlugs()
+
+		tabsVisible = sole( [ Gaffer.Metadata.value( p, self.tabsVisibleMetadataKey ) for p in plugs ] )
+		if tabsVisible is None :
+			tabsVisible = False
+		self.__setTabsVisible( tabsVisible, persist = False )
+
+		currentTab = sole( [ Gaffer.Metadata.value( p, self.currentTabMetadataKey ) for p in plugs ] )
+		if currentTab is not None :
+			with Gaffer.BlockedConnection( self.__currentTabChangedConnection ) :
+				self.__switchToTab( currentTab )
 
 GafferUI.PlugValueWidget.registerType( Gaffer.Color3fPlug, ExtendedColorPlugValueWidget )
 GafferUI.PlugValueWidget.registerType( Gaffer.Color4fPlug, ExtendedColorPlugValueWidget )

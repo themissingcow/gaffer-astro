@@ -49,7 +49,6 @@ from . import StarnetUI
 from .ColorChooser import ColorChooser
 from .ColorSliderPlugValueWidget import *
 from .ColorSlidersPlugValueWidget import *
-from .ColorSwatchPlugValueWidget import ColorSwatchPlugValueWidget
 from .ExtendedColorPlugValueWidget import ExtendedColorPlugValueWidget
 from .RampPlugValueWidget import RampPlugValueWidget
 

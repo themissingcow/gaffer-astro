@@ -1,6 +1,8 @@
 # gaffer-astro
 Gaffer Astrophotography tools
 
+![image](https://user-images.githubusercontent.com/896779/107218096-0ff59480-6a07-11eb-803d-5200eeb00c0d.png)
+
 ## Overview
 
 `GafferAstro` is an early-stages project that brings Astrophotography processing tools to [Gaffer](https://www.gafferhq.org). It is very much a work in progress. It aims to take advantage of Gaffer's node-based processing pipeline to automate post-processing of monochrome astrophotography images.

@@ -326,12 +326,12 @@ class File
 			const Box2i fileDataWindow( V2i( 0 ), V2i( m_info.width, m_info.height ) );
 			dataRegion = BufferAlgo::intersection( targetRegion, fileDataWindow );
 
-			const int numRows = targetRegion.size().y;
+			const int numRows = dataRegion.size().y;
 			const size_t numPixels = numRows * dataRegion.size().x;
 			data.resize( m_info.numberOfChannels * numPixels );
 			for( int i = 0; i < m_info.numberOfChannels; ++i )
 			{
-				m_reader->ReadSamples( &data[ i * numPixels ], targetRegion.min.y, numRows, i );
+				m_reader->ReadSamples( &data[ i * numPixels ], dataRegion.min.y, numRows, i );
 			}
 
 			return m_info.numberOfChannels;

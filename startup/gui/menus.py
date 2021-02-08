@@ -65,7 +65,7 @@ scriptWindowMenu = GafferUI.ScriptWindow.menuDefinition( application )
 
 def clearImageCaches( menu ) :
 	scope = GafferUI.EditMenu.scope( menu )
-	for cls in ( GafferImage.ImageReader, GafferAstro.FITSReader ) :
+	for cls in ( GafferImage.ImageReader, GafferAstro.FITSReader, GafferAstro.XISFReader ) :
 		for node in cls.RecursiveRange( scope.script ) :
 			node['refreshCount'].setValue( node['refreshCount'].getValue() + 1 )
 

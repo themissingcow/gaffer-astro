@@ -329,9 +329,11 @@ class File
 			const int numRows = dataRegion.size().y;
 			const size_t numPixels = numRows * dataRegion.size().x;
 			data.resize( m_info.numberOfChannels * numPixels );
+
+			const int startRow = m_info.height - dataRegion.max.y;
 			for( int i = 0; i < m_info.numberOfChannels; ++i )
 			{
-				m_reader->ReadSamples( &data[ i * numPixels ], dataRegion.min.y, numRows, i );
+				m_reader->ReadSamples( &data[ i * numPixels ], startRow, numRows, i );
 			}
 
 			return m_info.numberOfChannels;
@@ -796,11 +798,8 @@ IECore::ConstFloatVectorDataPtr XISFReader::computeChannelData( const std::strin
 		return parent->channelDataPlug()->defaultValue();
 	}
 
-	Imath::V2i flippedTileOrigin( tileOrigin );
-	flippedTileOrigin.y = file->info().height - tileOrigin.y - ImagePlug::tileSize();
-
 	Box2i dataWindow = outPlug()->dataWindowPlug()->getValue();
-	const Box2i tileBound( flippedTileOrigin, flippedTileOrigin + V2i( ImagePlug::tileSize() ) );
+	const Box2i tileBound( tileOrigin, tileOrigin + V2i( ImagePlug::tileSize() ) );
 	if( !BufferAlgo::intersects( dataWindow, tileBound ) )
 	{
 		throw IECore::Exception( boost::str(
@@ -812,7 +811,7 @@ IECore::ConstFloatVectorDataPtr XISFReader::computeChannelData( const std::strin
 
 	V3i tileBatchIndex;
 	int subIndex;
-	file->findTile( channelName, flippedTileOrigin, tileBatchIndex, subIndex );
+	file->findTile( channelName, tileOrigin, tileBatchIndex, subIndex );
 
 	c.set( g_tileBatchIndexContextName, tileBatchIndex );
 

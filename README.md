@@ -12,7 +12,7 @@ It currently includes:
  - Basic `FITS` and `XISF` read support.
  - `Starnet` and `PixInsight` processing tasks (requires these to be already installed and working on your system).
  - `CollectChannels` and `AssembleChannels` nodes to aid loading of monochrome astro cam images.
- - `Colorise` and `HueSaturation` image nodes.
+ - `Scale`, `Trim`, `Colorise` and `HueSaturation` image nodes.
  - `MultiMonoImageReader`, `MultiGrade` and `MultiStarnet` tools to ease working with narrowband image channels.
  
  It is only currently being developed/tested on Linux, MacOS should also work.

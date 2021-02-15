@@ -42,6 +42,19 @@ import IECore
 
 import inspect
 
+
+__all__ = [ 'MultiPixInsight' ]
+
+
+def _channelNames( plug, forLabel ) :
+
+	node = plug.ancestor( MultiPixInsight )
+	if forLabel :
+		return [ n.replace( ".", "/" ) for n in node["in"].channelNames() ]
+	else :
+		return node["in"].channelNames()
+
+
 class MultiPixInsight( GafferDispatch.TaskNode ) :
 
 	def __init__( self, name = "MultiPixInsight" ) :
@@ -65,6 +78,10 @@ class MultiPixInsight( GafferDispatch.TaskNode ) :
 		spreadsheet["rows"].addColumn( Gaffer.StringPlug( "source" ), "source" )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"], "spreadsheet:staticColumn", True, persistent = False )
 		pixInsight["channels"].setInput( spreadsheet["out"]["source"] )
+		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"]["value"], "plugValueWidget:type", "GafferUI.PresetsPlugValueWidget", persistent = False )
+		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"]["value"], "presetsPlugValueWidget:allowCustom", True, persistent = False )
+		Gaffer.Metadata.registerValue( MultiPixInsight, "rows.*.cells.source.value", "presetNames", lambda plug : IECore.StringVectorData( _channelNames( plug, True ) ) )
+		Gaffer.Metadata.registerValue( MultiPixInsight, "rows.*.cells.source.value", "presetValues", lambda plug : IECore.StringVectorData( _channelNames( plug, False ) ) )
 
 		spreadsheet["rows"].addColumn( pixInsight["pixScript"] )
 		Gaffer.MetadataAlgo.copy(
@@ -73,6 +90,7 @@ class MultiPixInsight( GafferDispatch.TaskNode ) :
 			exclude = "spreadsheet:columnName layout:* deletable"
 		)
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["pixScript"], "spreadsheet:staticColumn", True, persistent = False )
+
 		pixInsight["pixScript"].setInput( spreadsheet["out"]["pixScript"] )
 
 		Gaffer.PlugAlgo.promote( spreadsheet["rows"] )

@@ -67,6 +67,11 @@ class MultiPixInsight( GafferDispatch.TaskNode ) :
 		pixInsight["channels"].setInput( spreadsheet["out"]["source"] )
 
 		spreadsheet["rows"].addColumn( pixInsight["pixScript"] )
+		Gaffer.MetadataAlgo.copy(
+			pixInsight["pixScript"],
+			spreadsheet["rows"].defaultRow()["cells"]["pixScript"]["value"],
+			exclude = "spreadsheet:columnName layout:* deletable"
+		)
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["pixScript"], "spreadsheet:staticColumn", True, persistent = False )
 		pixInsight["pixScript"].setInput( spreadsheet["out"]["pixScript"] )
 

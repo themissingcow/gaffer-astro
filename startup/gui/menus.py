@@ -57,6 +57,7 @@ nodeMenu.append( "/Image/Transform/Trim", GafferAstro.Trim )
 
 nodeMenu.append( "/Astro/ColoriseSHO", GafferAstro.ColoriseSHO )
 nodeMenu.append( "/Astro/MultiStarnet", GafferAstro.MultiStarnet )
+nodeMenu.append( "/Astro/MultiPixInsight", GafferAstro.MultiPixInsight )
 nodeMenu.append( "/Astro/PixInsight", GafferAstro.PixInsight )
 nodeMenu.append( "/Astro/Starnet", GafferAstro.Starnet )
 

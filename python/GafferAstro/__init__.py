@@ -43,6 +43,7 @@ from .LoadSHO import LoadSHO
 from .MultiMonoImageReader import MultiMonoImageReader
 from .MultiGrade import MultiGrade
 from .MultiStarnet import MultiStarnet
+from .MultiPixInsight import MultiPixInsight
 from .ParentPath import ParentPath
 from .PixInsight import PixInsight
 from .Scale import Scale

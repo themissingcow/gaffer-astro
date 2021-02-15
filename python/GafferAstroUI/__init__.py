@@ -44,6 +44,7 @@ from . import HueSaturationUI
 from . import XISFReaderUI
 from . import LoadSHOUI
 from . import PixInsightUI
+from . import MultiPixInsightUI
 from . import ScaleUI
 from . import StarnetUI
 from . import MultiStarnetUI

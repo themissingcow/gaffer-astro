@@ -70,7 +70,7 @@ class PixInsight( GafferDispatch.TaskNode ) :
 			throw new Error( "Multi-image files not supported " + inputPath );
 		}
 
-		if( P != undefined ) {
+		if( typeof P !== 'undefined' ) {
 
 			let window = windows[0];
 			let view = window.mainView;

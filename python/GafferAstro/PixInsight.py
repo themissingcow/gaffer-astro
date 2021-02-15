@@ -134,7 +134,7 @@ class PixInsight( GafferDispatch.TaskNode ) :
 
 			{js}
 
-			{trippleQuote} % ( variables["input"], variables["output"], variables["jsVars"], variables["pixScript"] )
+			{trippleQuote} % ( variables["input"], variables["output"], variables["jsVariables"], variables["pixScript"] )
 
 			with open( variables["scriptPath"], "w" ) as script :
 				script.write( js )

@@ -7,6 +7,8 @@ Gaffer.Metadata.registerNode(
 
 	GafferAstro.PixInsight,
 
+	"layout:section:Settings.Script:collapsed", False,
+
 	plugs = {
 
 		"in" : [
@@ -64,7 +66,12 @@ Gaffer.Metadata.registerNode(
 		],
 
 		"pixScript" : [
-			"plugValueWidget:type", "GafferUI.MultiLineStringPlugValueWidget"
+			"plugValueWidget:type", "GafferUI.MultiLineStringPlugValueWidget",
+			"layout:section", "Settings.Script"
+		],
+
+		"variables" : [
+			"layout:section", "Settings.Variables"
 		]
 
 	}

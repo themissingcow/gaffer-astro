@@ -51,6 +51,10 @@ class PixInsight( GafferDispatch.TaskNode ) :
 		let inputPath = "%s";
 		let outputPath = "%s";
 
+		// User Variables
+
+		%s
+
 		// User Script
 
 		%s
@@ -66,14 +70,17 @@ class PixInsight( GafferDispatch.TaskNode ) :
 			throw new Error( "Multi-image files not supported " + inputPath );
 		}
 
-		let window = windows[0];
-		let view = window.mainView;
-		view.id = "INPUT"
+		if( P != undefined ) {
 
-		P.executeOn( view );
+			let window = windows[0];
+			let view = window.mainView;
+			view.id = "INPUT"
 
-		window.saveAs( outputPath, false, false, true, false );
-		window.forceClose();
+			P.executeOn( view );
+
+			window.saveAs( outputPath, false, false, true, false );
+			window.forceClose();
+		}
 
 		CoreApplication.terminateInstance( CoreApplication.instance );
 	""" )
@@ -87,8 +94,10 @@ class PixInsight( GafferDispatch.TaskNode ) :
 
 		self["fileName"] = Gaffer.StringPlug( defaultValue = '', )
 		self["channels"] = Gaffer.StringPlug( defaultValue = 'Y', )
-		self["dataType"] = Gaffer.StringPlug( defaultValue = 'uint16', )
+		self["dataType"] = Gaffer.StringPlug( defaultValue = 'float', )
 		self["pixScript"] = Gaffer.StringPlug( defaultValue = '', )
+		self["variables"] = Gaffer.CompoundDataPlug()
+
 		self["slot"] = Gaffer.IntPlug( defaultValue = 2, minValue = 1, maxValue = 256 )
 
 		imageWriter = GafferImage.ImageWriter()
@@ -125,13 +134,14 @@ class PixInsight( GafferDispatch.TaskNode ) :
 
 			{js}
 
-			{trippleQuote} % ( variables["input"], variables["output"], variables["pixScript"] )
+			{trippleQuote} % ( variables["input"], variables["output"], variables["jsVars"], variables["pixScript"] )
 
 			with open( variables["scriptPath"], "w" ) as script :
 				script.write( js )
 		""" ).format( js = self.jsTemplate, trippleQuote = '"""' ) )
 		jsCommand["variables"].addChild( Gaffer.NameValuePlug( "pixScript", "", "pixScript" ) )
 		jsCommand["variables"]["pixScript"]["value"].setInput( self["pixScript"] )
+		jsCommand["variables"].addChild( Gaffer.NameValuePlug( "jsVariables", "", "jsVariables" ) )
 		for p in ( "scriptPath", "input", "output" ) :
 			nvPlug = Gaffer.NameValuePlug( p, "", p )
 			jsCommand["variables"].addChild( nvPlug )
@@ -143,6 +153,16 @@ class PixInsight( GafferDispatch.TaskNode ) :
 		self["__GenerateScriptExr"] = jsExp
 		jsExp.setExpression(
 			inspect.cleandoc( """
+				import IECore
+				jsVars = parent["variables"]
+				varStr = ""
+				for key, data in jsVars.items() :
+					if isinstance( data, IECore.StringData ) :
+						dataRepr = repr( data.value )
+					else :
+						dataRepr = data.value
+					varStr += "var %s = %s;\\n" % ( key, dataRepr )
+				parent["__GenerateScript"]["variables"]["jsVariables"]["value"] = varStr
 				parent["__GenerateScript"]["variables"]["scriptPath"]["value"] = parent["fileName"].replace( ".xisf", ".js" )
 			""" ),
 			"python"

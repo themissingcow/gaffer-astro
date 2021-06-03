@@ -24,13 +24,22 @@ class Starnet( GafferDispatch.TaskNode ) :
 		imageWriter["tiff"]["dataType"].setInput( self["dataType"] )
 		imageWriter["in"].setInput( self["in"] )
 
+		constant = GafferImage.Constant()
+		self["__Constant"] = constant
+
 		imageReader = GafferImage.ImageReader()
 		self["__ImageReader"] = imageReader
 		imageReader["missingFrameMode"].setValue( 1 )
 		imageReader["fileName"].setInput( self["fileName"] )
 
+		outputSwitch = Gaffer.Switch()
+		self["__OutputSwitch"] = outputSwitch
+		outputSwitch.setup( imageReader["out"] )
+		outputSwitch["in"][0].setInput( constant["out"] )
+		outputSwitch["in"][1].setInput( imageReader["out"] )
+
 		self["out"] = GafferImage.ImagePlug( direction = Gaffer.Plug.Direction.Out )
-		self["out"].setInput( imageReader["out"] )
+		self["out"].setInput( outputSwitch["out"] )
 
 		sysStarnet = GafferDispatch.SystemCommand()
 		self["__SystemCommand_starnet"] = sysStarnet
@@ -56,11 +65,14 @@ class Starnet( GafferDispatch.TaskNode ) :
 		self["__Expression"] = Gaffer.Expression()
 		self["__Expression"].setExpression(
 			inspect.cleandoc( """
+				import os
 				fileName = parent["fileName"]
 				if fileName and not fileName.endswith( ".tif" ) :
 					raise ValueError( "fileName must be a .tif file" )
 				tmpName = fileName.replace( ".tif", "-input.tif" )
 				parent["__ImageWriter"]["fileName"] = tmpName
+				parent["__Constant"]["format"] = parent["__ImageWriter"]["in"]["format"]
+				parent["__OutputSwitch"]["index"] = 1 if os.path.exists(parent["__ImageReader"]["fileName"]) else 0
 			""" ),
 			"python"
 		)

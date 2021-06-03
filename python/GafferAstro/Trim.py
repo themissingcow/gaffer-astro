@@ -68,6 +68,13 @@ class Trim( GafferImage.ImageProcessor ) :
 		transform["filter"].setValue( "sharp-gaussian" )
 		transform["in"].setInput( mirror["out"] )
 
+		# Reset the display window to the data window, required for rotation without
+		# the crop region being applied.
+		transformCorrectionCrop = GafferImage.Crop()
+		self["__TransformCorrectionCrop"] = transformCorrectionCrop
+		transformCorrectionCrop["in"].setInput( transform["out"] )
+		transformCorrectionCrop["areaSource"].setValue( 1 ) # dataWindow
+
 		transformCenterExpr = Gaffer.Expression()
 		self["__Expression_Transform"] = transformCenterExpr
 		transformCenterExpr.setExpression(
@@ -81,7 +88,7 @@ class Trim( GafferImage.ImageProcessor ) :
 
 		crop = GafferImage.Crop()
 		self["__Crop"] = crop
-		crop["in"].setInput( transform["out"] )
+		crop["in"].setInput( transformCorrectionCrop["out"] )
 
 		options = GafferScene.StandardOptions()
 		self["__CropWindow"] = options
@@ -112,7 +119,7 @@ class Trim( GafferImage.ImageProcessor ) :
 		imageMeta["metadata"].addChild( Gaffer.NameValuePlug( "gaffer:sourceScene", Gaffer.StringPlug( "value" ), True, "member1" ) )
 		imageMeta["user"].addChild( Gaffer.StringPlug( "parentPath" ) )
 		imageMeta["user"]["parentPath"].setInput( parentPath["parentPath"] )
-		imageMeta["in"].setInput( transform["out"] )
+		imageMeta["in"].setInput( transformCorrectionCrop["out"] )
 
 		self["__Expression_Meta"] = Gaffer.Expression()
 		expr = 'parent["__ImageMetadata"]["metadata"]["member1"]["value"] = parent["__ImageMetadata"]["user"]["parentPath"] + ".__CropWindow.out"'

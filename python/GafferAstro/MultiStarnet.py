@@ -46,13 +46,10 @@ import inspect
 __all__ = [ 'MultiStarnet' ]
 
 
-def _channelNames( plug, forLabel ) :
+def _channelNames( plug ) :
 
 	node = plug.ancestor( MultiStarnet )
-	if forLabel :
-		return [ n.replace( ".", "/" ) for n in node["in"].channelNames() ]
-	else :
-		return node["in"].channelNames()
+	return node["in"].channelNames()
 
 
 class MultiStarnet( GafferDispatch.TaskNode ) :
@@ -103,8 +100,8 @@ class MultiStarnet( GafferDispatch.TaskNode ) :
 		starnet["channels"].setInput( spreadsheet["out"]["source"] )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"]["value"], "plugValueWidget:type", "GafferUI.PresetsPlugValueWidget", persistent = False )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"]["value"], "presetsPlugValueWidget:allowCustom", True, persistent = False )
-		Gaffer.Metadata.registerValue( MultiStarnet, "rows.*.cells.source.value", "presetNames", lambda plug : IECore.StringVectorData( _channelNames( plug, True ) ) )
-		Gaffer.Metadata.registerValue( MultiStarnet, "rows.*.cells.source.value", "presetValues", lambda plug : IECore.StringVectorData( _channelNames( plug, False ) ) )
+		Gaffer.Metadata.registerValue( MultiStarnet, "rows.*.cells.source.value", "presetNames", lambda plug : IECore.StringVectorData( _channelNames( plug ) ) )
+		Gaffer.Metadata.registerValue( MultiStarnet, "rows.*.cells.source.value", "presetValues", lambda plug : IECore.StringVectorData( _channelNames( plug ) ) )
 
 		spreadsheet["rows"].addColumn( Gaffer.FloatPlug( "scale", minValue = 0, defaultValue = 1 ), "scale" )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["scale"], "spreadsheet:staticColumn", True, persistent = False )

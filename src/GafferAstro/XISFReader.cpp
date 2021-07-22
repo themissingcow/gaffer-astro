@@ -450,7 +450,7 @@ FilePtr retrieveFile( std::string &fileName, XISFReader::MissingFrameMode mode, 
 				}
 
 				// setup a context with the new frame
-				ContextPtr holdContext = new Context( *context, Context::Shared );
+				ContextPtr holdContext = new Context( *context );
 				holdContext->setFrame( *fIt );
 
 				return retrieveFile( fileName, XISFReader::Error, node, holdContext.get() );

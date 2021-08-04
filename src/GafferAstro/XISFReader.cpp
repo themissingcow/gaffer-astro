@@ -577,7 +577,7 @@ void XISFReader::affects( const Gaffer::Plug *input, AffectedPlugsContainer &out
 
 	if( input == fileNamePlug() || input == refreshCountPlug() || input == missingFrameModePlug() )
 	{
-		for( ValuePlugIterator it( outPlug() ); !it.done(); ++it )
+		for( ValuePlug::Iterator it( outPlug() ); !it.done(); ++it )
 		{
 			outputs.push_back( it->get() );
 		}

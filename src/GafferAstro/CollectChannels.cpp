@@ -210,7 +210,7 @@ void CollectChannels::hashFormat( const GafferImage::ImagePlug *parent, const Ga
 	if( channelsData->readable().size() )
 	{
 		Context::EditableScope editScope( context );
-		editScope.set( channelVariablePlug()->getValue(), channelsData->readable()[0] );
+		editScope.set( channelVariablePlug()->getValue(), &channelsData->readable()[0] );
 		h = inPlug()->formatPlug()->hash();
 	}
 	else
@@ -226,7 +226,7 @@ GafferImage::Format CollectChannels::computeFormat( const Gaffer::Context *conte
 	if( channelsData->readable().size() )
 	{
 		Context::EditableScope editScope( context );
-		editScope.set( channelVariablePlug()->getValue(), channelsData->readable()[0] );
+		editScope.set( channelVariablePlug()->getValue(), &channelsData->readable()[0] );
 		return inPlug()->formatPlug()->getValue();
 	}
 	else
@@ -246,7 +246,7 @@ void CollectChannels::hashDeep( const GafferImage::ImagePlug *parent, const Gaff
 	Context::EditableScope editScope( context );
 	for( const auto &i : channelsData->readable() )
 	{
-		editScope.set( channelVariable, i );
+		editScope.set( channelVariable, &i );
 		sourceChannelPlug()->hash( h );
 		inPlug()->deepPlug()->hash( h );
 	}
@@ -262,7 +262,7 @@ bool CollectChannels::computeDeep( const Gaffer::Context *context, const ImagePl
 	Context::EditableScope editScope( context );
 	for( const auto &i : channelsData->readable() )
 	{
-		editScope.set( channelVariable, i );
+		editScope.set( channelVariable, &i );
 		bool curDeep = inPlug()->deepPlug()->getValue();
 		if( outDeep == -1 )
 		{
@@ -294,7 +294,7 @@ void CollectChannels::hashSampleOffsets( const GafferImage::ImagePlug *parent, c
 	Context::EditableScope editScope( context );
 	for( const auto &i : channelsData->readable() )
 	{
-		editScope.set( channelVariable, i );
+		editScope.set( channelVariable, &i );
 		sourceChannelPlug()->hash( h );
 		inPlug()->sampleOffsetsPlug()->hash( h );
 	}
@@ -314,7 +314,7 @@ IECore::ConstIntVectorDataPtr CollectChannels::computeSampleOffsets( const Imath
 	Context::EditableScope editScope( context );
 	for( const auto &i : channelsData->readable() )
 	{
-		editScope.set( channelVariable, i );
+		editScope.set( channelVariable, &i );
 		IECore::ConstIntVectorDataPtr curSampleOffsetsData = inPlug()->sampleOffsetsPlug()->getValue();
 		if( !outSampleOffsetsData )
 		{
@@ -337,7 +337,7 @@ void CollectChannels::hashMetadata( const GafferImage::ImagePlug *parent, const 
 	if( channelsData->readable().size() )
 	{
 		Context::EditableScope editScope( context );
-		editScope.set( channelVariablePlug()->getValue(), channelsData->readable()[0] );
+		editScope.set( channelVariablePlug()->getValue(), &channelsData->readable()[0] );
 		h = inPlug()->metadataPlug()->hash();
 	}
 	else
@@ -353,7 +353,7 @@ IECore::ConstCompoundDataPtr CollectChannels::computeMetadata( const Gaffer::Con
 	if( channelsData->readable().size() )
 	{
 		Context::EditableScope editScope( context );
-		editScope.set( channelVariablePlug()->getValue(), channelsData->readable()[0] );
+		editScope.set( channelVariablePlug()->getValue(), &channelsData->readable()[0] );
 		return inPlug()->metadataPlug()->getValue();
 	}
 	else
@@ -379,11 +379,11 @@ void CollectChannels::hashDataWindow( const GafferImage::ImagePlug *output, cons
 	}
 
 	Context::EditableScope editScope( context );
-	editScope.set( channelVariable, channels[0] );
+	editScope.set( channelVariable, &channels[0] );
 	inPlug()->deepPlug()->hash( h );
 	for( unsigned int i = 0; i < channels.size(); i++ )
 	{
-		editScope.set( channelVariable, channels[i] );
+		editScope.set( channelVariable, &channels[i] );
 		sourceChannelPlug()->hash( h );
 		inPlug()->dataWindowPlug()->hash( h );
 	}
@@ -404,11 +404,11 @@ Imath::Box2i CollectChannels::computeDataWindow( const Gaffer::Context *context,
 	}
 
 	Context::EditableScope editScope( context );
-	editScope.set( channelVariable, channels[0] );
+	editScope.set( channelVariable, &channels[0] );
 	bool deep = inPlug()->deepPlug()->getValue();
 	for( unsigned int i = 0; i < channels.size(); i++ )
 	{
-		editScope.set( channelVariable, channels[i] );
+		editScope.set( channelVariable, &channels[i] );
 		Box2i curDataWindow = inPlug()->dataWindowPlug()->getValue();
 		if( i == 0 || !deep )
 		{
@@ -445,7 +445,7 @@ void CollectChannels::hashChannelNames( const GafferImage::ImagePlug *output, co
 	Context::EditableScope editScope( context );
 	for( unsigned int i = 0; i < channels.size(); i++ )
 	{
-		editScope.set( channelVariable, channels[i] );
+		editScope.set( channelVariable, &channels[i] );
 		sourceChannelPlug()->hash( h );
 		inPlug()->channelNamesPlug()->hash( h );
 	}
@@ -464,7 +464,7 @@ IECore::ConstStringVectorDataPtr CollectChannels::computeChannelNames( const Gaf
 	Context::EditableScope editScope( context );
 	for( unsigned int i = 0; i < channels.size(); i++ )
 	{
-		editScope.set( channelVariable, channels[i] );
+		editScope.set( channelVariable, &channels[i] );
 
 		ConstStringVectorDataPtr srcChannelsData = inPlug()->channelNamesPlug()->getValue();
 		const std::vector<string> &srcChannels = srcChannelsData->readable();
@@ -498,7 +498,7 @@ void CollectChannels::hashChannelData( const GafferImage::ImagePlug *parent, con
 		ImagePlug::GlobalScope c( context );
 
 		channelVariable = channelVariablePlug()->getValue();
-		c.set( channelVariable, channelName );
+		c.set( channelVariable, &channelName );
 
 		ConstStringVectorDataPtr srcChannelsData = inPlug()->channelNamesPlug()->getValue();
 
@@ -507,8 +507,8 @@ void CollectChannels::hashChannelData( const GafferImage::ImagePlug *parent, con
 	}
 
 	Context::EditableScope editScope( context );
-	editScope.set( channelVariable, channelName );
-	editScope.set( ImagePlug::channelNameContextName, srcChannel );
+	editScope.set( channelVariable, &channelName );
+	editScope.set( ImagePlug::channelNameContextName, &srcChannel );
 
 	const V2i tileOrigin = context->get<V2i>( ImagePlug::tileOriginContextName );
 	const Box2i tileBound( tileOrigin, tileOrigin + V2i( ImagePlug::tileSize() ) );
@@ -547,7 +547,7 @@ IECore::ConstFloatVectorDataPtr CollectChannels::computeChannelData( const std::
 		ImagePlug::GlobalScope c( context );
 
 		channelVariable = channelVariablePlug()->getValue();
-		c.set( channelVariable, channelName );
+		c.set( channelVariable, &channelName );
 
 		ConstStringVectorDataPtr srcChannelsData = inPlug()->channelNamesPlug()->getValue();
 
@@ -555,7 +555,7 @@ IECore::ConstFloatVectorDataPtr CollectChannels::computeChannelData( const std::
 	}
 
 	Context::EditableScope editScope( context );
-	editScope.set( channelVariable, channelName );
+	editScope.set( channelVariable, &channelName );
 
 	// First use this EditableScope as a global scope
 	editScope.remove( ImagePlug::channelNameContextName );
@@ -572,8 +572,8 @@ IECore::ConstFloatVectorDataPtr CollectChannels::computeChannelData( const std::
 	}
 
 	// Then set up the scope to evaluate the input channel data
-	editScope.set( ImagePlug::channelNameContextName, srcChannel );
-	editScope.set( ImagePlug::tileOriginContextName, tileOrigin );
+	editScope.set( ImagePlug::channelNameContextName, &srcChannel );
+	editScope.set( ImagePlug::tileOriginContextName, &tileOrigin );
 
 	ConstFloatVectorDataPtr inputData = inPlug()->channelDataPlug()->getValue();
 

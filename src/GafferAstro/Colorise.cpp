@@ -285,7 +285,7 @@ void Colorise::hashColorData( const Gaffer::Context *context, IECore::MurmurHash
 
 		if( ImageAlgo::channelExists( channelNames, channelName ) )
 		{
-			channelDataScope.setChannelName( channelName );
+			channelDataScope.setChannelName( &channelName );
 			inPlug()->channelDataPlug()->hash( h );
 		}
 	}
@@ -314,7 +314,7 @@ void Colorise::computeColorData( const Gaffer::Context *context, IECore::FloatVe
 		ImagePlug::ChannelDataScope channelDataScope( context );
 		if( ImageAlgo::channelExists( channelNames, channelName ) )
 		{
-			channelDataScope.setChannelName( channelName );
+			channelDataScope.setChannelName( &channelName );
 			sourceChannelData = inPlug()->channelDataPlug()->getValue();
 		}
 	}

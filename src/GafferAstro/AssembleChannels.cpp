@@ -202,7 +202,7 @@ void AssembleChannels::hashChannelData( const GafferImage::ImagePlug *output, co
 		{
 			ImagePlug::ChannelDataScope channelDataScope( context );
 			const Imath::V2i tileOrigin = context->get<Imath::V2i>( ImagePlug::tileOriginContextName );
-			channelDataScope.setChannelName( sourceChannel );
+			channelDataScope.setChannelName( &sourceChannel );
 			h.append( sourceInput->channelDataHash( sourceChannel, tileOrigin ) );
 		}
 	}
@@ -238,7 +238,7 @@ IECore::ConstFloatVectorDataPtr AssembleChannels::computeChannelData( const std:
 		if( ImageAlgo::channelExists( channelNames, sourceChannel ) )
 		{
 			ImagePlug::ChannelDataScope channelDataScope( context );
-			channelDataScope.setChannelName( sourceChannel );
+			channelDataScope.setChannelName( &sourceChannel );
 			return sourceInput->channelDataPlug()->getValue();
 		}
 	}

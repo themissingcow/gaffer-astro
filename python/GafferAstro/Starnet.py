@@ -72,6 +72,7 @@ class Starnet( GafferDispatch.TaskNode ) :
 				tmpName = fileName.replace( ".tif", "-input.tif" )
 				parent["__ImageWriter"]["fileName"] = tmpName
 				parent["__Constant"]["format"] = parent["__ImageWriter"]["in"]["format"]
+				_ = parent["__ImageReader"]["refreshCount"] # Cause the expression to re-evaluate with cache clear
 				parent["__OutputSwitch"]["index"] = 1 if os.path.exists(parent["__ImageReader"]["fileName"]) else 0
 			""" ),
 			"python"

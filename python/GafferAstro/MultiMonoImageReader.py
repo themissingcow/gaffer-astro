@@ -105,11 +105,11 @@ class MultiMonoImageReader( GafferImage.ImageNode ) :
 		self["__Spreadsheet"] = spreadsheet
 		spreadsheet["selector"].setValue( "${channel}" )
 
+		Gaffer.Metadata.registerValue( spreadsheet["rows"], "spreadsheet:columnsNeedSerialisation", False, persistent = False )
+
 		tokenColumnIndex = spreadsheet["rows"].addColumn( Gaffer.StringPlug( "filenameToken", defaultValue="${channel}" ) )
-		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["filenameToken"], "spreadsheet:staticColumn", True, persistent = False )
 
 		extensionColumnIndex = spreadsheet["rows"].addColumn( Gaffer.StringPlug( "extension", defaultValue = "xisf" ) )
-		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["extension"], "spreadsheet:staticColumn", True, persistent = False )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["extension"]["value"], 'preset:fits', 'fits', persistent = False )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["extension"]["value"], 'preset:xisf', 'xisf', persistent = False )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["extension"]["value"], 'preset:tif', 'tif', persistent = False )
@@ -133,6 +133,7 @@ class MultiMonoImageReader( GafferImage.ImageNode ) :
 			"python"
 		)
 
-		Gaffer.PlugAlgo.promote( spreadsheet["rows"] )
+		promotedRowsPlug = Gaffer.PlugAlgo.promote( spreadsheet["rows"] )
+		Gaffer.Metadata.registerValue( promotedRowsPlug, "spreadsheet:columnsNeedSerialisation", False, persistent = False )
 
 IECore.registerRunTimeTyped( MultiMonoImageReader, typeName = "GafferAstro::MultiMonoImageReader" )

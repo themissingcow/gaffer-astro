@@ -238,7 +238,7 @@ void FITSReader::affects( const Gaffer::Plug *input, AffectedPlugsContainer &out
 
 	if( input == fileNamePlug() || input == refreshCountPlug() )
 	{
-		for( ValuePlugIterator it( outPlug() ); !it.done(); ++it )
+		for( ValuePlug::Iterator it( outPlug() ); !it.done(); ++it )
 		{
 			outputs.push_back( it->get() );
 		}

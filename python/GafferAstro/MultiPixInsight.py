@@ -72,8 +72,9 @@ class MultiPixInsight( GafferDispatch.TaskNode ) :
 		self["__Spreadsheet"] = spreadsheet
 		spreadsheet["selector"].setValue( "${channel}" )
 
+		Gaffer.Metadata.registerValue( spreadsheet["rows"], "spreadsheet:columnsNeedSerialisation", False, persistent = False )
+
 		spreadsheet["rows"].addColumn( Gaffer.StringPlug( "source" ), "source" )
-		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"], "spreadsheet:staticColumn", True, persistent = False )
 		pixInsight["channels"].setInput( spreadsheet["out"]["source"] )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"]["value"], "plugValueWidget:type", "GafferUI.PresetsPlugValueWidget", persistent = False )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"]["value"], "presetsPlugValueWidget:allowCustom", True, persistent = False )
@@ -86,11 +87,12 @@ class MultiPixInsight( GafferDispatch.TaskNode ) :
 			spreadsheet["rows"].defaultRow()["cells"]["pixScript"]["value"],
 			exclude = "spreadsheet:columnName layout:* deletable"
 		)
-		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["pixScript"], "spreadsheet:staticColumn", True, persistent = False )
 
 		pixInsight["pixScript"].setInput( spreadsheet["out"]["pixScript"] )
 
-		Gaffer.PlugAlgo.promote( spreadsheet["rows"] )
+		promotedRowsPlug = Gaffer.PlugAlgo.promote( spreadsheet["rows"] )
+		Gaffer.Metadata.registerValue( promotedRowsPlug, "spreadsheet:columnsNeedSerialisation", False, persistent = False )
+
 		Gaffer.PlugAlgo.promote( pixInsight["variables"] )
 
 		wedge = GafferDispatch.Wedge()

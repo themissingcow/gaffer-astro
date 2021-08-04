@@ -38,7 +38,6 @@
 
 #include "ColorAlgoBinding.h"
 #include "NodeBinding.h"
-#include "SpreadsheetSerialisation.h"
 
 using namespace boost::python;
 using namespace GafferAstroModule;
@@ -48,6 +47,5 @@ BOOST_PYTHON_MODULE( _GafferAstro )
 
 	bindColorAlgo();
 	bindNodes();
-	overrideSpreadsheetSerialisation();
 
 }

@@ -94,9 +94,9 @@ class MultiStarnet( GafferDispatch.TaskNode ) :
 		self["__Spreadsheet"] = spreadsheet
 		spreadsheet["selector"].setValue( "${channel}" )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"], "spreadsheet:defaultRowVisible", False, persistent = False )
+		Gaffer.Metadata.registerValue( spreadsheet["rows"], "spreadsheet:columnsNeedSerialisation", False, persistent = False )
 
 		spreadsheet["rows"].addColumn( Gaffer.StringPlug( "source" ), "source" )
-		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"], "spreadsheet:staticColumn", True, persistent = False )
 		starnet["channels"].setInput( spreadsheet["out"]["source"] )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"]["value"], "plugValueWidget:type", "GafferUI.PresetsPlugValueWidget", persistent = False )
 		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["source"]["value"], "presetsPlugValueWidget:allowCustom", True, persistent = False )
@@ -104,10 +104,10 @@ class MultiStarnet( GafferDispatch.TaskNode ) :
 		Gaffer.Metadata.registerValue( MultiStarnet, "rows.*.cells.source.value", "presetValues", lambda plug : IECore.StringVectorData( _channelNames( plug ) ) )
 
 		spreadsheet["rows"].addColumn( Gaffer.FloatPlug( "scale", minValue = 0, defaultValue = 1 ), "scale" )
-		Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"]["scale"], "spreadsheet:staticColumn", True, persistent = False )
 		scale["factor"].setInput( spreadsheet["out"]["scale"] )
 
-		Gaffer.PlugAlgo.promote( spreadsheet["rows"] )
+		promotedRowsPlug = Gaffer.PlugAlgo.promote( spreadsheet["rows"] )
+		Gaffer.Metadata.registerValue( promotedRowsPlug, "spreadsheet:columnsNeedSerialisation", False, persistent = False )
 
 		wedge = GafferDispatch.Wedge()
 		self["__Wedge"] = wedge

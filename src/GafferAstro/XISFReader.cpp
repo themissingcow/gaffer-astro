@@ -450,7 +450,7 @@ FilePtr retrieveFile( std::string &fileName, XISFReader::MissingFrameMode mode, 
 				}
 
 				// setup a context with the new frame
-				ContextPtr holdContext = new Context( *context, Context::Shared );
+				ContextPtr holdContext = new Context( *context );
 				holdContext->setFrame( *fIt );
 
 				return retrieveFile( fileName, XISFReader::Error, node, holdContext.get() );
@@ -577,7 +577,7 @@ void XISFReader::affects( const Gaffer::Plug *input, AffectedPlugsContainer &out
 
 	if( input == fileNamePlug() || input == refreshCountPlug() || input == missingFrameModePlug() )
 	{
-		for( ValuePlugIterator it( outPlug() ); !it.done(); ++it )
+		for( ValuePlug::Iterator it( outPlug() ); !it.done(); ++it )
 		{
 			outputs.push_back( it->get() );
 		}
@@ -813,7 +813,7 @@ IECore::ConstFloatVectorDataPtr XISFReader::computeChannelData( const std::strin
 	int subIndex;
 	file->findTile( channelName, tileOrigin, tileBatchIndex, subIndex );
 
-	c.set( g_tileBatchIndexContextName, tileBatchIndex );
+	c.set( g_tileBatchIndexContextName, &tileBatchIndex );
 
 	ConstObjectVectorPtr tileBatch = tileBatchPlug()->getValue();
 	ConstObjectPtr curTileChannel = tileBatch->members()[ subIndex ];

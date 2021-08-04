@@ -37,7 +37,6 @@
 from .CollectChannelsTest import CollectChannelsTest
 from .ColorAlgoTest import ColorAlgoTest
 from .FileAlgoTest import FileAlgoTest
-from .SpreadsheetSerialisationTest import SpreadsheetSerialisationTest
 
 if __name__ == "__main__":
 	import unittest

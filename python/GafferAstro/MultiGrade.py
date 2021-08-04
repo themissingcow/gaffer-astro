@@ -55,10 +55,11 @@ class MultiGrade( GafferImage.ImageProcessor ) :
 		self["__Spreadsheet"] = spreadsheet
 		spreadsheet["selector"].setValue( "${image:channelName}" )
 
+		Gaffer.Metadata.registerValue( spreadsheet["rows"], "spreadsheet:columnsNeedSerialisation", False, persistent = False )
+
 		for p in ( "blackPoint", "whitePoint", "gamma" ) :
 			grade[ p ].gang()
 			spreadsheet["rows"].addColumn( grade[ p ]["r"], p )
-			Gaffer.Metadata.registerValue( spreadsheet["rows"].defaultRow()["cells"][ p ], "spreadsheet:staticColumn", True, persistent = False )
 			grade[ p ]["r"].setInput( spreadsheet["out"][ p ] )
 
 		channelsExpression = Gaffer.Expression()
@@ -73,6 +74,7 @@ class MultiGrade( GafferImage.ImageProcessor ) :
 			"python"
 		)
 
-		Gaffer.PlugAlgo.promote( spreadsheet["rows"] )
+		promotedRowsPlug = Gaffer.PlugAlgo.promote( spreadsheet["rows"] )
+		Gaffer.Metadata.registerValue( promotedRowsPlug, "spreadsheet:columnsNeedSerialisation", False, persistent = False )
 
 IECore.registerRunTimeTyped( MultiGrade, typeName = "GafferAstro::MultiGrade" )

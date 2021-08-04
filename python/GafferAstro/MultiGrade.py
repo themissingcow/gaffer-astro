@@ -49,7 +49,15 @@ class MultiGrade( GafferImage.ImageProcessor ) :
 		grade = GafferImage.Grade()
 		self["__Grade"] = grade
 		grade["in"].setInput( self["in"] )
-		self["out"].setInput( grade["out"] )
+
+		disableSwitch = Gaffer.Switch()
+		self["__DisableSwitch"] = disableSwitch
+		disableSwitch.setup( self["in"] )
+		disableSwitch["in"][0].setInput( self["in"] )
+		disableSwitch["in"][1].setInput( grade["out"] )
+		disableSwitch["index"].setInput( self["enabled"] )
+		self["out"].setInput( disableSwitch["out"] )
+		self['out'].setFlags(Gaffer.Plug.Flags.Serialisable, False)
 
 		spreadsheet = Gaffer.Spreadsheet()
 		self["__Spreadsheet"] = spreadsheet

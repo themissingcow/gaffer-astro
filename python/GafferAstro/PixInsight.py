@@ -55,11 +55,7 @@ class PixInsight( GafferDispatch.TaskNode ) :
 
 		%s
 
-		// User Script
-
-		%s
-
-		// Process input
+		// Open input
 
 		let windows = ImageWindow.open( inputPath );
 
@@ -69,6 +65,15 @@ class PixInsight( GafferDispatch.TaskNode ) :
 		if ( windows.length > 1 ) {
 			throw new Error( "Multi-image files not supported " + inputPath );
 		}
+
+		let window = windows[0];
+		let view = window.mainView;
+
+		// User Script
+
+		%s
+
+		// Process input if P is supplied, otherwise assume it was done in the user script
 
 		if( typeof P !== 'undefined' ) {
 

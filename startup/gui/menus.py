@@ -61,6 +61,16 @@ nodeMenu.append( "/Astro/MultiPixInsight", GafferAstro.MultiPixInsight )
 nodeMenu.append( "/Astro/PixInsight", GafferAstro.PixInsight )
 nodeMenu.append( "/Astro/Starnet", GafferAstro.Starnet )
 
+# Editors
+
+layouts = GafferUI.Layouts.acquire( application )
+
+layouts.registerEditor( "GlobalContextVariables" )
+
+# Context Menus
+
+GafferUI.PlugValueWidget.popupMenuSignal().connect( GafferAstroUI.GlobalContextVariables.appendPlugValueWidgetMenuDefinitions, scoped = False )
+
 # Menu Bar
 
 scriptWindowMenu = GafferUI.ScriptWindow.menuDefinition( application )

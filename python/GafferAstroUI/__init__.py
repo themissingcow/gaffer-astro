@@ -54,6 +54,7 @@ from .ColorSliderPlugValueWidget import *
 from .ColorSlidersPlugValueWidget import *
 from .ExtendedColorPlugValueWidget import ExtendedColorPlugValueWidget
 from .RampPlugValueWidget import RampPlugValueWidget
+from .GlobalContextVariables import GlobalContextVariables
 
 
 __import__( "IECore" ).loadConfig( "GAFFER_STARTUP_PATHS", subdirectory = "GafferAstroUI" )

@@ -100,7 +100,7 @@ class PixInsight( GafferDispatch.TaskNode ) :
 		self["fileName"] = Gaffer.StringPlug( defaultValue = '', )
 		self["channels"] = Gaffer.StringPlug( defaultValue = 'Y', )
 		self["dataType"] = Gaffer.StringPlug( defaultValue = 'float', )
-		self["pixScript"] = Gaffer.StringPlug( defaultValue = '', )
+		self["pixScript"] = Gaffer.StringPlug( defaultValue = '', substitutions = IECore.StringAlgo.Substitutions.NoSubstitutions )
 		self["variables"] = Gaffer.CompoundDataPlug()
 
 		self["slot"] = Gaffer.IntPlug( defaultValue = 2, minValue = 1, maxValue = 256 )
@@ -144,7 +144,9 @@ class PixInsight( GafferDispatch.TaskNode ) :
 			with open( variables["scriptPath"], "w" ) as script :
 				script.write( js )
 		""" ).format( js = self.jsTemplate, trippleQuote = '"""' ) )
-		jsCommand["variables"].addChild( Gaffer.NameValuePlug( "pixScript", "", "pixScript" ) )
+
+		pixScriptPlug = Gaffer.StringPlug( defaultValue = '', substitutions = IECore.StringAlgo.Substitutions.NoSubstitutions )
+		jsCommand["variables"].addChild( Gaffer.NameValuePlug( "pixScript", pixScriptPlug, "pixScript" ) )
 		jsCommand["variables"]["pixScript"]["value"].setInput( self["pixScript"] )
 		jsCommand["variables"].addChild( Gaffer.NameValuePlug( "jsVariables", "", "jsVariables" ) )
 		for p in ( "scriptPath", "input", "output" ) :
